@@ -105,6 +105,30 @@ export async function getUserByEmail(email: string): Promise<User | null> {
   return rows[0] ?? null;
 }
 
+export async function getUserById(id: string): Promise<User | null> {
+  if (!isDbConfigured()) {
+    return id === SAMPLE.id ? SAMPLE : null;
+  }
+  const sql = getSql();
+  const rows = (await sql`
+    SELECT id, email, handle, name, tagline, photo_url, resume_md,
+           created_at, deleted_at
+    FROM users
+    WHERE id = ${id}::uuid
+    LIMIT 1
+  `) as User[];
+  return rows[0] ?? null;
+}
+
+export async function softDeleteUser(id: string): Promise<void> {
+  const sql = getSql();
+  await sql`
+    UPDATE users
+    SET deleted_at = now()
+    WHERE id = ${id}::uuid AND deleted_at IS NULL
+  `;
+}
+
 export type CreateUserInput = {
   email: string;
   name: string;

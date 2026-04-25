@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const ERRORS: Record<string, string> = {
@@ -9,40 +9,78 @@ const ERRORS: Record<string, string> = {
   resume_too_short: "Paste a real résumé — at least 40 characters.",
   resume_too_large: "Résumé is too large (64KB max).",
   not_authenticated: "Session lost — please sign in again.",
+  photo_bad_type: "Photo must be JPEG, PNG, or WebP.",
+  photo_too_large: "Photo is too large (5MB max).",
+  photo_storage_unavailable:
+    "Photo upload is temporarily unavailable. Try without a photo for now.",
 };
 
 export default function SetupClient({ email }: { email: string }) {
   const router = useRouter();
+  const fileRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState("");
   const [tagline, setTagline] = useState("");
   const [resume, setResume] = useState("");
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Manage the preview blob URL so we don't leak object URLs.
+  useEffect(() => {
+    if (!photo) {
+      setPhotoPreview(null);
+      return;
+    }
+    const url = URL.createObjectURL(photo);
+    setPhotoPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [photo]);
+
+  function onPickPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0] ?? null;
+    setError(null);
+    if (f && !["image/jpeg", "image/png", "image/webp"].includes(f.type)) {
+      setError(ERRORS.photo_bad_type);
+      return;
+    }
+    if (f && f.size > 5 * 1024 * 1024) {
+      setError(ERRORS.photo_too_large);
+      return;
+    }
+    setPhoto(f);
+  }
+
+  function clearPhoto() {
+    setPhoto(null);
+    if (fileRef.current) fileRef.current.value = "";
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setBusy(true);
     try {
+      const data = new FormData();
+      data.append("name", name);
+      data.append("tagline", tagline);
+      data.append("resume_md", resume);
+      if (photo) data.append("photo", photo);
+
       const res = await fetch("/api/users/create", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          tagline,
-          resume_md: resume,
-        }),
+        body: data,
       });
-      const data = await res.json().catch(() => ({}));
+      const payload = await res.json().catch(() => ({}));
       if (!res.ok) {
-        if (data?.redirect) {
-          router.push(data.redirect);
+        if (payload?.redirect) {
+          router.push(payload.redirect);
           return;
         }
-        setError(ERRORS[data?.error] ?? "Something went wrong. Try again.");
+        setError(ERRORS[payload?.error] ?? "Something went wrong. Try again.");
         return;
       }
-      router.push(data.redirect);
+      router.push(payload.redirect);
       router.refresh();
     } finally {
       setBusy(false);
@@ -57,6 +95,42 @@ export default function SetupClient({ email }: { email: string }) {
           Signed in as <strong>{email}</strong>. We'll generate a short link
           for you on the next screen.
         </p>
+
+        <div className="photo-row">
+          <label
+            htmlFor="photo-input"
+            className={`photo-slot ${photoPreview ? "has-photo" : ""}`}
+          >
+            {photoPreview ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={photoPreview} alt="Preview" />
+            ) : (
+              <span className="photo-plus">+</span>
+            )}
+          </label>
+          <div className="photo-meta">
+            <span className="photo-label">
+              {photo ? photo.name : "Profile photo"}
+              <em> optional</em>
+            </span>
+            <span className="photo-hint">
+              JPEG, PNG, or WebP · 5MB max · square works best
+            </span>
+            {photo && (
+              <button type="button" className="photo-remove" onClick={clearPhoto}>
+                remove
+              </button>
+            )}
+          </div>
+          <input
+            id="photo-input"
+            ref={fileRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={onPickPhoto}
+            hidden
+          />
+        </div>
 
         <label className="field">
           <span>Name</span>

@@ -1,6 +1,6 @@
 import { createHash, randomInt } from "node:crypto";
-import { Resend } from "resend";
 import { getSql } from "./db";
+import { sendOtpEmail } from "./email";
 
 const CODE_TTL_MINUTES = 10;
 const MAX_ATTEMPTS = 5;
@@ -12,7 +12,6 @@ function hashCode(code: string): string {
 }
 
 function generateCode(): string {
-  // 6 digits, zero-padded. randomInt is cryptographically strong.
   return String(randomInt(0, 1_000_000)).padStart(6, "0");
 }
 
@@ -75,70 +74,4 @@ export async function verifyOtp(
 
   await sql`UPDATE otp_codes SET consumed_at = now() WHERE id = ${row.id}`;
   return { ok: true };
-}
-
-async function sendOtpEmail(email: string, code: string): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM ?? "autopitch <onboarding@resend.dev>";
-  const isDev = process.env.NODE_ENV !== "production";
-
-  // Always log the code in dev so the flow stays exercisable even when
-  // Resend rejects the recipient (test sender only delivers to the email
-  // used at resend.com signup until a real domain is verified).
-  if (isDev) {
-    console.log(`\n[otp] code for ${email}: ${code}\n`);
-  }
-
-  if (!apiKey) {
-    if (!isDev) throw new Error("RESEND_API_KEY is not set");
-    return;
-  }
-
-  try {
-    const resend = new Resend(apiKey);
-    const result = await resend.emails.send({
-      from,
-      to: email,
-      subject: `Your autopitch.me sign-in code: ${code}`,
-      text: signinEmailText(code),
-      html: signinEmailHtml(code),
-    });
-    if (result.error) {
-      if (isDev) {
-        console.warn(`[otp] resend rejected send: ${result.error.message}`);
-        return;
-      }
-      throw new Error(`Resend send failed: ${result.error.message}`);
-    }
-  } catch (err) {
-    if (isDev) {
-      const msg = err instanceof Error ? err.message : String(err);
-      console.warn(`[otp] resend error: ${msg}`);
-      return;
-    }
-    throw err;
-  }
-}
-
-function signinEmailText(code: string): string {
-  return `Your autopitch.me sign-in code is:
-
-${code}
-
-This code expires in ${CODE_TTL_MINUTES} minutes. If you didn't request it, you can ignore this email.`;
-}
-
-function signinEmailHtml(code: string): string {
-  // Plain-on-warm to match the site. Email clients are unforgiving — keep it
-  // inline-styled and table-free; modern clients render this fine.
-  return `<!doctype html>
-<html><body style="margin:0;padding:0;background:#f8f7f4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1e;">
-  <div style="max-width:480px;margin:0 auto;padding:48px 24px;">
-    <div style="font-size:17px;font-weight:600;letter-spacing:-0.01em;margin-bottom:32px;">autopitch.me</div>
-    <h1 style="font-size:24px;font-weight:600;letter-spacing:-0.02em;margin:0 0 16px;">Your sign-in code</h1>
-    <p style="margin:0 0 24px;color:#6b6b73;font-size:15px;line-height:1.5;">Enter this code to finish signing in to autopitch.me.</p>
-    <div style="background:#ffffff;border:1px solid #e8e6e1;border-radius:20px;padding:28px;text-align:center;font-size:32px;font-weight:600;letter-spacing:0.4em;font-variant-numeric:tabular-nums;">${code}</div>
-    <p style="margin:24px 0 0;color:#6b6b73;font-size:13px;line-height:1.5;">This code expires in ${CODE_TTL_MINUTES} minutes. If you didn't request it, you can ignore this email.</p>
-  </div>
-</body></html>`;
 }

@@ -1,8 +1,15 @@
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
+import { put } from "@vercel/blob";
+import { sendWelcomeEmail } from "@/lib/email";
 import { getSession } from "@/lib/session";
+import { makeTakedownToken } from "@/lib/takedown";
 import { createUser, getUserByEmail } from "@/lib/users";
 
 const MAX_RESUME_BYTES = 64 * 1024;
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+const PHOTO_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 export async function POST(req: Request) {
   const session = await getSession();
@@ -10,7 +17,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "not_authenticated" }, { status: 401 });
   }
 
-  // Refuse if a user already exists for this email — onboarding only runs once.
   const existing = await getUserByEmail(session.email);
   if (existing) {
     return NextResponse.json(
@@ -19,20 +25,17 @@ export async function POST(req: Request) {
     );
   }
 
-  let body: {
-    name?: unknown;
-    tagline?: unknown;
-    resume_md?: unknown;
-  };
+  let form: FormData;
   try {
-    body = await req.json();
+    form = await req.formData();
   } catch {
-    return NextResponse.json({ error: "bad_json" }, { status: 400 });
+    return NextResponse.json({ error: "bad_form" }, { status: 400 });
   }
 
-  const name = typeof body.name === "string" ? body.name.trim() : "";
-  const tagline = typeof body.tagline === "string" ? body.tagline.trim() : "";
-  const resume = typeof body.resume_md === "string" ? body.resume_md.trim() : "";
+  const name = String(form.get("name") ?? "").trim();
+  const tagline = String(form.get("tagline") ?? "").trim();
+  const resume = String(form.get("resume_md") ?? "").trim();
+  const photo = form.get("photo");
 
   if (name.length < 1 || name.length > 80) {
     return NextResponse.json({ error: "name_required" }, { status: 400 });
@@ -47,13 +50,59 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "resume_too_large" }, { status: 400 });
   }
 
+  let photoUrl: string | null = null;
+  if (photo instanceof File && photo.size > 0) {
+    if (!PHOTO_TYPES.has(photo.type)) {
+      return NextResponse.json({ error: "photo_bad_type" }, { status: 400 });
+    }
+    if (photo.size > MAX_PHOTO_BYTES) {
+      return NextResponse.json({ error: "photo_too_large" }, { status: 400 });
+    }
+    if (!process.env.BLOB_READ_WRITE_TOKEN) {
+      return NextResponse.json(
+        { error: "photo_storage_unavailable" },
+        { status: 500 },
+      );
+    }
+
+    // Random filename so URLs are unguessable; keep the user's extension so
+    // the served Content-Type matches.
+    const ext = (photo.name.split(".").pop() || "jpg").toLowerCase().slice(0, 5);
+    const blob = await put(`avatars/${randomUUID()}.${ext}`, photo, {
+      access: "public",
+      addRandomSuffix: false,
+      contentType: photo.type,
+    });
+    photoUrl = blob.url;
+  }
+
   const user = await createUser({
     email: session.email,
     name,
     tagline: tagline || null,
     resume_md: resume,
-    photo_url: null,
+    photo_url: photoUrl,
   });
+
+  // Welcome email with the takedown kill switch. Built on origin so it works
+  // whether the request comes in via the apex domain or a vercel.app URL.
+  const h = await headers();
+  const host = h.get("host") ?? "autopitch.me";
+  const proto = h.get("x-forwarded-proto") ?? "https";
+  const origin = `${proto}://${host}`;
+  const takedownUrl = `${origin}/takedown/${makeTakedownToken(user.id)}`;
+
+  // Don't fail signup if the welcome email errors — the user has their page.
+  try {
+    await sendWelcomeEmail({
+      to: user.email,
+      name: user.name,
+      handle: user.handle,
+      takedownUrl,
+    });
+  } catch (err) {
+    console.error("[welcome] send failed:", err);
+  }
 
   return NextResponse.json({ ok: true, redirect: `/${user.handle}` });
 }

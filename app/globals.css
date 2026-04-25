@@ -511,6 +511,105 @@ button {
   color: var(--text);
 }
 
+/* ─── photo upload ────────────────────────────────────────────────── */
+
+.photo-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.photo-slot {
+  width: 80px;
+  height: 80px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.photo-slot:hover {
+  border-color: var(--text-dim);
+  background: var(--surface);
+}
+
+.photo-slot.has-photo {
+  border-style: solid;
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+.photo-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-plus {
+  font-size: 28px;
+  color: var(--text-dim);
+  line-height: 1;
+}
+
+.photo-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.photo-label {
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.photo-label em {
+  font-style: normal;
+  color: var(--text-dim);
+  font-weight: 400;
+  margin-left: 6px;
+}
+
+.photo-hint {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.photo-remove {
+  align-self: flex-start;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-dim);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--border);
+}
+
+.photo-remove:hover {
+  color: var(--text);
+}
+
+/* ─── danger CTA (takedown) ───────────────────────────────────────── */
+
+.cta-danger {
+  background: #b3261e;
+  color: var(--surface);
+}
+
+.cta-danger:hover {
+  background: #8a1d17;
+}
+
 /* ─── raw resume helper ───────────────────────────────────────────── */
 
 .raw {
