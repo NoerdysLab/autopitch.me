@@ -4,7 +4,7 @@ import SetupClient from "./SetupClient";
 import { getSession } from "@/lib/session";
 import { getUserByEmail } from "@/lib/users";
 
-export const metadata = { title: "Set up your page · autopitch.me" };
+export const metadata = { title: "Set up your page" };
 
 export default async function SetupPage() {
   const session = await getSession();

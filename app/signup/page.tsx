@@ -4,7 +4,7 @@ import SignupClient from "./SignupClient";
 import { getSession } from "@/lib/session";
 import { getUserByEmail } from "@/lib/users";
 
-export const metadata = { title: "Sign up · autopitch.me" };
+export const metadata = { title: "Sign up" };
 
 export default async function SignupPage() {
   const session = await getSession();

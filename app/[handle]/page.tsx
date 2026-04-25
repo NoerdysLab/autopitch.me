@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: PageProps) {
   const user = await getUserByHandle(handle);
   if (!user) return {};
   return {
-    title: `${user.name} · autopitch.me`,
+    title: user.name,
     description: user.tagline ?? `Pitch ${user.name} to anyone with one click.`,
   };
 }
