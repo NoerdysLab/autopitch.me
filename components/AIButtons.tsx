@@ -137,39 +137,45 @@ function AIBtn({
 }
 
 function Mark({ platform }: { platform: Platform }) {
-  // Simple geometric monograms — keeps the visual rhythm without leaning on
-  // third-party logos. Distinct shape per brand for quick recognition.
+  // Monochrome approximations of each brand's icon mark. Drawn with currentColor
+  // so they pick up the button's text color and stay on-design.
   switch (platform) {
     case "claude":
+      // Anthropic / Claude "spark": eight tapered rays in an asterisk burst,
+      // built as four crossed lozenges rotated 0/45/90/135°.
       return (
-        <svg
-          className="mark"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        >
-          <path d="M5 15c2-7 5-9 7-9s5 2 7 9" />
-          <path d="M5 15c2 0 3-1 4-3" />
-          <path d="M19 15c-2 0-3-1-4-3" />
+        <svg className="mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+          <g transform="translate(12 12)">
+            <ellipse rx="1.7" ry="10" />
+            <ellipse rx="1.7" ry="10" transform="rotate(45)" />
+            <ellipse rx="1.7" ry="10" transform="rotate(90)" />
+            <ellipse rx="1.7" ry="10" transform="rotate(135)" />
+          </g>
         </svg>
       );
     case "chatgpt":
+      // OpenAI "knot": three overlapping ellipses rotated 60° make the
+      // hexagonal six-petal flower outline.
       return (
         <svg
           className="mark"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="1.6"
+          strokeWidth="1.5"
+          aria-hidden
         >
-          <circle cx="12" cy="12" r="3.2" />
-          <circle cx="12" cy="12" r="8" />
-          <path d="M12 4v4M12 16v4M4 12h4M16 12h4" />
+          <g transform="translate(12 12)">
+            <ellipse rx="3.6" ry="9.5" />
+            <ellipse rx="3.6" ry="9.5" transform="rotate(60)" />
+            <ellipse rx="3.6" ry="9.5" transform="rotate(120)" />
+          </g>
         </svg>
       );
     case "perplexity":
+      // Perplexity uses an asterisk-style burst inside a rounded square.
+      // Render the asterisk only — the surrounding button already plays the
+      // role of the rounded-square container.
       return (
         <svg
           className="mark"
@@ -178,18 +184,19 @@ function Mark({ platform }: { platform: Platform }) {
           stroke="currentColor"
           strokeWidth="1.8"
           strokeLinecap="round"
+          aria-hidden
         >
-          <path d="M12 4v16M4 12h16M6 6l12 12M18 6L6 18" />
+          <line x1="12" y1="3" x2="12" y2="21" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="5.6" y1="5.6" x2="18.4" y2="18.4" />
+          <line x1="18.4" y1="5.6" x2="5.6" y2="18.4" />
         </svg>
       );
     case "gemini":
+      // Google Gemini "sparkle": four-pointed star with concave sides.
       return (
-        <svg
-          className="mark"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-        >
-          <path d="M12 2c.6 4.6 3.4 7.4 8 8-4.6.6-7.4 3.4-8 8-.6-4.6-3.4-7.4-8-8 4.6-.6 7.4-3.4 8-8z" />
+        <svg className="mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+          <path d="M12 2 C12.7 8.4 15.6 11.3 22 12 C15.6 12.7 12.7 15.6 12 22 C11.3 15.6 8.4 12.7 2 12 C8.4 11.3 11.3 8.4 12 2 Z" />
         </svg>
       );
   }
