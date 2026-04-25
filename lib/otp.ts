@@ -80,31 +80,43 @@ export async function verifyOtp(
 async function sendOtpEmail(email: string, code: string): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM ?? "autopitch <onboarding@resend.dev>";
+  const isDev = process.env.NODE_ENV !== "production";
 
-  // Dev fallback: when no Resend key is set, log the code so the flow can be
-  // exercised end-to-end before the email vendor is wired up. NEVER do this
-  // in production — gate on NODE_ENV.
+  // Always log the code in dev so the flow stays exercisable even when
+  // Resend rejects the recipient (test sender only delivers to the email
+  // used at resend.com signup until a real domain is verified).
+  if (isDev) {
+    console.log(`\n[otp] code for ${email}: ${code}\n`);
+  }
+
   if (!apiKey) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("RESEND_API_KEY is not set");
-    }
-    console.log(
-      `\n[otp] dev mode — no RESEND_API_KEY, code for ${email}: ${code}\n`,
-    );
+    if (!isDev) throw new Error("RESEND_API_KEY is not set");
     return;
   }
 
-  const resend = new Resend(apiKey);
-  const result = await resend.emails.send({
-    from,
-    to: email,
-    subject: `Your autopitch.me sign-in code: ${code}`,
-    text: signinEmailText(code),
-    html: signinEmailHtml(code),
-  });
-
-  if (result.error) {
-    throw new Error(`Resend send failed: ${result.error.message}`);
+  try {
+    const resend = new Resend(apiKey);
+    const result = await resend.emails.send({
+      from,
+      to: email,
+      subject: `Your autopitch.me sign-in code: ${code}`,
+      text: signinEmailText(code),
+      html: signinEmailHtml(code),
+    });
+    if (result.error) {
+      if (isDev) {
+        console.warn(`[otp] resend rejected send: ${result.error.message}`);
+        return;
+      }
+      throw new Error(`Resend send failed: ${result.error.message}`);
+    }
+  } catch (err) {
+    if (isDev) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.warn(`[otp] resend error: ${msg}`);
+      return;
+    }
+    throw err;
   }
 }
 
