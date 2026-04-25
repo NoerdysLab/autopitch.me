@@ -6,7 +6,34 @@ type Platform = "claude" | "chatgpt" | "perplexity" | "gemini";
 
 type Props = {
   prompt: string;
+  handle: string;
 };
+
+// Fire-and-forget click log. Uses sendBeacon so the request survives the
+// page navigating away to claude.ai / chatgpt.com on desktop.
+function logClick(handle: string, platform: Platform) {
+  if (typeof navigator === "undefined") return;
+  try {
+    const blob = new Blob(
+      [JSON.stringify({ handle, ai_platform: platform })],
+      { type: "application/json" },
+    );
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon("/api/click", blob);
+      return;
+    }
+    // Older browsers — fetch with keepalive has the same survive-navigation
+    // semantics as sendBeacon.
+    void fetch("/api/click", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ handle, ai_platform: platform }),
+      keepalive: true,
+    });
+  } catch {
+    // Logging is best-effort. Don't let a tracking failure break the click.
+  }
+}
 
 // Desktop deep-link targets. Gemini doesn't support a `?q=` prefill, so it's
 // clipboard-only on every device.
@@ -50,7 +77,7 @@ async function copy(text: string): Promise<boolean> {
   }
 }
 
-export default function AIButtons({ prompt }: Props) {
+export default function AIButtons({ prompt, handle }: Props) {
   const [showMore, setShowMore] = useState(false);
   const [moreReady, setMoreReady] = useState(false);
   const [toast, setToast] = useState<{ id: number; msg: string } | null>(null);
@@ -65,6 +92,8 @@ export default function AIButtons({ prompt }: Props) {
   }
 
   async function handleClick(platform: Platform) {
+    // Log first so the request is in flight before any navigation.
+    logClick(handle, platform);
     const ok = await copy(prompt);
     const mobile = isMobile();
 

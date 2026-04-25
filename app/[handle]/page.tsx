@@ -28,7 +28,7 @@ export default async function PitchPage({ params }: PageProps) {
         <Avatar name={user.name} photoUrl={user.photo_url} />
         <h1>{user.name}</h1>
         {user.tagline && <p className="tagline">{user.tagline}</p>}
-        <AIButtons prompt={prompt} />
+        <AIButtons prompt={prompt} handle={user.handle} />
       </main>
       <footer className="site-footer">
         <div className="container">autopitch.me</div>
