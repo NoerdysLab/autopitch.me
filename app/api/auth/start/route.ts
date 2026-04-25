@@ -18,7 +18,24 @@ export async function POST(req: Request) {
     );
   }
 
-  await startOtp(email);
+  try {
+    await startOtp(email);
+  } catch (err) {
+    // Most common cause in the wild: Resend's test sender will only deliver
+    // to the email used at resend.com signup until a domain is verified. We
+    // surface the underlying message so the dashboard error is actionable.
+    const detail = err instanceof Error ? err.message : "unknown";
+    console.error("[/api/auth/start] send failed:", detail);
+    return NextResponse.json(
+      {
+        error: "send_failed",
+        message:
+          "Couldn't deliver the code email. If you're using the Resend test sender, it only delivers to your resend.com signup address. Verify autopitch.me as a sending domain in Resend to fix this.",
+        detail,
+      },
+      { status: 502 },
+    );
+  }
 
   const session = await getSession();
   session.pending_email = email.toLowerCase();
