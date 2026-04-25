@@ -1,29 +1,17 @@
-import { getSql, isDbConfigured } from "./db";
+-- Inserts the Alex Chen sample so /x4k9 keeps working against the database.
+-- Optional — paste into the Neon SQL Editor after 001_init.sql if you want
+-- the demo page to render once DATABASE_URL is set.
+--
+-- Safe to re-run; the ON CONFLICT clause makes it idempotent.
 
-// User store. Queries Neon when DATABASE_URL is set; falls back to an
-// in-memory sample so the /x4k9 demo keeps rendering before the database
-// is provisioned.
-
-export type User = {
-  id: string;
-  email: string;
-  handle: string;
-  name: string;
-  tagline: string | null;
-  photo_url: string | null;
-  resume_md: string;
-  created_at: string;
-  deleted_at: string | null;
-};
-
-const SAMPLE: User = {
-  id: "sample",
-  email: "alex@stanford.edu",
-  handle: "x4k9",
-  name: "Alex Chen",
-  tagline: "CS @ Stanford · ML systems & founder energy",
-  photo_url: null,
-  resume_md: `# Alex Chen
+INSERT INTO users (email, handle, name, tagline, photo_url, resume_md)
+VALUES (
+  'alex@stanford.edu',
+  'x4k9',
+  'Alex Chen',
+  'CS @ Stanford · ML systems & founder energy',
+  NULL,
+  $md$# Alex Chen
 
 CS @ Stanford (B.S. expected 2026). Interested in ML systems, fast inference,
 and small teams shipping ambitious products. Looking for summer roles, founding
@@ -67,23 +55,6 @@ Python, Rust, TypeScript, CUDA, PyTorch, JAX, Postgres, distributed training.
 - Ran the Stanford CS curriculum in 2.5 years instead of 4.
 - Cold-emailed 47 researchers in freshman year; the 12 who replied shaped
   every subsequent project.
-`,
-  created_at: new Date("2026-01-15").toISOString(),
-  deleted_at: null,
-};
-
-export async function getUserByHandle(handle: string): Promise<User | null> {
-  if (!isDbConfigured()) {
-    return handle === SAMPLE.handle ? SAMPLE : null;
-  }
-
-  const sql = getSql();
-  const rows = (await sql`
-    SELECT id, email, handle, name, tagline, photo_url, resume_md,
-           created_at, deleted_at
-    FROM users
-    WHERE handle = ${handle} AND deleted_at IS NULL
-    LIMIT 1
-  `) as User[];
-  return rows[0] ?? null;
-}
+$md$
+)
+ON CONFLICT DO NOTHING;
