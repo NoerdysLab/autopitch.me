@@ -384,6 +384,133 @@ button {
   }
 }
 
+/* ─── auth & setup forms ──────────────────────────────────────────── */
+
+.auth {
+  padding: 64px 0 96px;
+  display: flex;
+  justify-content: center;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 40px 32px;
+  box-shadow: 0 1px 2px var(--shadow);
+}
+
+.auth-card.auth-wide {
+  max-width: 560px;
+}
+
+.auth-card h1 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.auth-sub {
+  margin: 0 0 28px;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.field {
+  display: block;
+  margin-bottom: 18px;
+}
+
+.field > span {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.field > span em {
+  font-style: normal;
+  color: var(--text-dim);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.input {
+  display: block;
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--text);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--text);
+  background: var(--surface);
+}
+
+.textarea {
+  height: auto;
+  min-height: 280px;
+  padding: 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.code-input {
+  text-align: center;
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.4em;
+  height: 64px;
+}
+
+.auth-card .cta {
+  display: flex;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.auth-card .cta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 6px var(--shadow);
+}
+
+.auth-error {
+  margin: 14px 0 0;
+  color: #b3261e;
+  font-size: 13px;
+}
+
+.auth-link {
+  display: block;
+  margin: 18px auto 0;
+  color: var(--text-dim);
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--border);
+}
+
+.auth-link:hover {
+  color: var(--text);
+}
+
 /* ─── raw resume helper ───────────────────────────────────────────── */
 
 .raw {

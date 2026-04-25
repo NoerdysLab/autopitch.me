@@ -1,4 +1,5 @@
 import { getSql, isDbConfigured } from "./db";
+import { generateHandle } from "./handle";
 
 // User store. Queries Neon when DATABASE_URL is set; falls back to an
 // in-memory sample so the /x4k9 demo keeps rendering before the database
@@ -86,4 +87,62 @@ export async function getUserByHandle(handle: string): Promise<User | null> {
     LIMIT 1
   `) as User[];
   return rows[0] ?? null;
+}
+
+export async function getUserByEmail(email: string): Promise<User | null> {
+  if (!isDbConfigured()) {
+    return email.toLowerCase() === SAMPLE.email.toLowerCase() ? SAMPLE : null;
+  }
+
+  const sql = getSql();
+  const rows = (await sql`
+    SELECT id, email, handle, name, tagline, photo_url, resume_md,
+           created_at, deleted_at
+    FROM users
+    WHERE lower(email) = ${email.toLowerCase()} AND deleted_at IS NULL
+    LIMIT 1
+  `) as User[];
+  return rows[0] ?? null;
+}
+
+export type CreateUserInput = {
+  email: string;
+  name: string;
+  tagline: string | null;
+  resume_md: string;
+  photo_url: string | null;
+};
+
+// Creates a user with a fresh handle, retrying on the (unlikely but possible)
+// collision until we find a free one. With ~1M handles and a small user base
+// this loop almost never iterates more than once.
+export async function createUser(input: CreateUserInput): Promise<User> {
+  const sql = getSql();
+
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const handle = generateHandle();
+    try {
+      const rows = (await sql`
+        INSERT INTO users (email, handle, name, tagline, photo_url, resume_md)
+        VALUES (
+          ${input.email.toLowerCase()},
+          ${handle},
+          ${input.name},
+          ${input.tagline},
+          ${input.photo_url},
+          ${input.resume_md}
+        )
+        RETURNING id, email, handle, name, tagline, photo_url, resume_md,
+                  created_at, deleted_at
+      `) as User[];
+      return rows[0];
+    } catch (err) {
+      // 23505 = unique_violation. If it's the handle index, retry with a new
+      // handle; otherwise (e.g. email already exists) bubble up.
+      const msg = err instanceof Error ? err.message : String(err);
+      if (msg.includes("users_handle_active_idx")) continue;
+      throw err;
+    }
+  }
+  throw new Error("Could not allocate a unique handle after 8 tries");
 }
