@@ -29,7 +29,7 @@ export default async function Dashboard() {
 
   return (
     <div className="page">
-      <OwnerHeader handle={user.handle} show={["view", "edit"]} />
+      <OwnerHeader handle={user.handle} />
 
       <main className="container dash">
         <section className="dash-hero">

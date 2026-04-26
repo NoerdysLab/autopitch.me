@@ -11,7 +11,7 @@ export default function LoggedInHome({
   const firstName = name.split(/\s+/)[0];
   return (
     <div className="page">
-      <OwnerHeader handle={handle} show={["view", "edit", "dashboard"]} />
+      <OwnerHeader handle={handle} />
 
       <main className="container">
         <section className="hero hero-tight">

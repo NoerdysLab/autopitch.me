@@ -43,7 +43,7 @@ export default async function PitchPage({ params }: PageProps) {
 
   return (
     <div className="page" style={themeStyle}>
-      {isOwner && <OwnerHeader handle={user.handle} show={["edit", "dashboard"]} />}
+      {isOwner && <OwnerHeader handle={user.handle} />}
       <main className="pitch">
         <Avatar name={user.name} photoUrl={user.photo_url} />
         <h1>{user.name}</h1>

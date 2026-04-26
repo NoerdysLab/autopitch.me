@@ -26,7 +26,7 @@ export default async function EditPage({
 
   return (
     <div className="page">
-      <OwnerHeader handle={user.handle} show={["view", "dashboard"]} />
+      <OwnerHeader handle={user.handle} />
 
       <main className="container auth">
         <EditClient
