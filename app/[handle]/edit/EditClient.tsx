@@ -119,6 +119,37 @@ export default function EditClient(props: Props) {
     }
   }
 
+  async function deletePage() {
+    if (
+      !confirm(
+        `Delete autopitch.me/${props.handle} permanently? This can't be undone — your link will 404 immediately.`,
+      )
+    ) {
+      return;
+    }
+    setError(null);
+    setBusy(true);
+    try {
+      const res = await fetch("/api/users/takedown", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) {
+        const payload = await res.json().catch(() => ({}));
+        setError(
+          payload?.message ?? `Couldn't delete (HTTP ${res.status}). Try again.`,
+        );
+        return;
+      }
+      // Session was destroyed server-side; landing on / will show marketing.
+      router.push("/");
+      router.refresh();
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="auth-card auth-wide">
       <form onSubmit={submit}>
@@ -225,6 +256,24 @@ export default function EditClient(props: Props) {
         {savedOk && <p className="auth-success">Saved.</p>}
         {error && <p className="auth-error">{error}</p>}
       </form>
+
+      <div className="danger-zone">
+        <h3>Danger zone</h3>
+        <p>
+          Delete your page permanently. <strong>autopitch.me/{props.handle}</strong>{" "}
+          will return 404 and your résumé and photo are removed from view. You
+          can sign up again later with the same email if you change your mind —
+          you'll get a new handle.
+        </p>
+        <button
+          type="button"
+          className="cta cta-danger"
+          onClick={deletePage}
+          disabled={busy}
+        >
+          Delete my page
+        </button>
+      </div>
     </div>
   );
 }

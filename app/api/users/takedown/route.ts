@@ -1,21 +1,38 @@
 import { NextResponse } from "next/server";
+import { getSession } from "@/lib/session";
 import { verifyTakedownToken } from "@/lib/takedown";
-import { getUserById, softDeleteUser } from "@/lib/users";
+import { getUserByEmail, getUserById, softDeleteUser } from "@/lib/users";
 
-// HMAC-token-gated soft-delete. Idempotent: calling twice on the same user
-// is fine, the second call just no-ops because deleted_at is already set.
+// Soft-delete a page. Two auth paths:
+//   1. HMAC `token` from the welcome email (no login needed)
+//   2. The caller's verified session
+// Whichever was used, the session is always destroyed at the end — the user
+// just deleted their account, so logging them out is the right finishing
+// move. Idempotent: calling twice on the same user no-ops the second time.
 export async function POST(req: Request) {
-  let body: { token?: unknown };
+  let body: { token?: unknown } = {};
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "bad_json" }, { status: 400 });
+    // Empty/missing body is allowed when relying on session auth.
   }
 
-  const token = typeof body.token === "string" ? body.token : "";
-  const userId = verifyTakedownToken(token);
-  if (!userId) {
-    return NextResponse.json({ error: "invalid_token" }, { status: 400 });
+  const session = await getSession();
+
+  let userId: string | null = null;
+  if (typeof body.token === "string" && body.token) {
+    userId = verifyTakedownToken(body.token);
+    if (!userId) {
+      return NextResponse.json({ error: "invalid_token" }, { status: 400 });
+    }
+  } else if (session.email) {
+    const u = await getUserByEmail(session.email);
+    if (!u) {
+      return NextResponse.json({ error: "not_found" }, { status: 404 });
+    }
+    userId = u.id;
+  } else {
+    return NextResponse.json({ error: "not_authenticated" }, { status: 401 });
   }
 
   const user = await getUserById(userId);
@@ -27,5 +44,6 @@ export async function POST(req: Request) {
     await softDeleteUser(userId);
   }
 
+  session.destroy();
   return NextResponse.json({ ok: true });
 }
