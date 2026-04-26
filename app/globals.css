@@ -70,32 +70,25 @@ button {
   letter-spacing: -0.01em;
 }
 
-/* Center the wordmark even when there's a nav on the right; the
-   3-column grid keeps the wordmark dead-centered without depending on
-   the nav's width. */
+/* Wordmark on the left, nav on the right — gives the four-pill nav the
+   full remaining row width so it doesn't wrap to two lines. */
 .site-header .container {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
-.site-header .wordmark {
-  grid-column: 2;
-  text-align: center;
-}
+
 .site-header .nav {
-  grid-column: 3;
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-/* Home page header has no nav — the grid still centers it correctly. */
+/* Home page has no nav — center the wordmark there for a future logo. */
 .site-header-centered .container {
-  grid-template-columns: 1fr;
-}
-.site-header-centered .wordmark {
-  grid-column: 1;
+  justify-content: center;
 }
 
 .site-footer {
