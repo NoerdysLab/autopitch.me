@@ -509,6 +509,10 @@ button {
   font-size: 14px;
   padding: 10px 16px;
   border-radius: 999px;
+  /* Keep within viewport on narrow phones — long copy like
+     "Copied — open ChatGPT and paste" otherwise overflows. */
+  max-width: calc(100vw - 32px);
+  text-align: center;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
   opacity: 0;
   transform: translateY(8px);
@@ -864,24 +868,7 @@ button {
   margin: 0;
 }
 
-/* ─── owner bar on /<handle> ──────────────────────────────────────── */
-
-.owner-bar {
-  display: flex;
-  gap: 18px;
-  justify-content: flex-end;
-  padding: 16px 0;
-  position: absolute;
-  top: 16px;
-  right: 0;
-  left: 0;
-}
-
 /* ─── logged-in home ──────────────────────────────────────────────── */
-
-.hero-tight {
-  padding: 64px 0 24px;
-}
 
 .me-card {
   margin: 24px auto 96px;
@@ -1148,4 +1135,121 @@ button {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 14px;
   padding: 24px;
+}
+
+/* ─── mobile pass (≤480px) ────────────────────────────────────────────
+   Stop hardcoded paddings from eating up an entire phone screen and
+   stack the owner header so its 4 nav pills + sign out always fit. */
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  /* Header: stack wordmark above nav so the 4 pills + sign out have the
+     full row width to spread across without wrapping ugly. */
+  .site-header {
+    padding: 16px 0;
+  }
+  .site-header .container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .site-header .nav {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .site-header-centered .container {
+    align-items: center;
+  }
+
+  /* Bigger tap targets on phones — 32px pills are a hair small for a
+     thumb. 36px is closer to the 44pt iOS guideline without bloating. */
+  .nav-pill {
+    height: 36px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+
+  /* Trim oversized vertical padding on every section. The desktop spacing
+     was tuned for big screens; on a phone it forces unnecessary scrolling. */
+  .hero {
+    padding: 40px 0 24px;
+  }
+  .hero-tight {
+    padding: 24px 0 16px;
+  }
+  .pitch {
+    padding: 40px 16px 32px;
+  }
+  .cta-row {
+    padding: 8px 0 48px;
+  }
+  .auth {
+    padding: 32px 0 64px;
+  }
+  .auth-card {
+    padding: 28px 22px;
+    border-radius: 20px;
+  }
+  .me-card {
+    margin: 16px auto 64px;
+    padding: 24px 22px;
+    border-radius: 20px;
+  }
+  .me-link {
+    font-size: 18px;
+  }
+
+  /* Pitch page: name needs to wrap on long names like "Maximilian Wong" */
+  .pitch h1 {
+    font-size: 28px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* Notice card on /signup is already inside auth-card; the marketing
+     notice on / wants tighter side margins to match the new container. */
+  .notice {
+    margin: 20px auto 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+
+  /* Dashboard: smaller padding, single-column stat grid (already at 520px),
+     and let the dash-link wrap at handle boundaries. */
+  .dash {
+    padding: 8px 0 64px;
+  }
+  .dash-hero {
+    padding: 20px 22px;
+    border-radius: 16px;
+  }
+  .dash-link {
+    font-size: 18px;
+    flex-basis: 100%;
+  }
+  .dash-link-row {
+    gap: 10px;
+  }
+  .stat {
+    padding: 18px 20px;
+  }
+  .stat-value {
+    font-size: 30px;
+  }
+  .bars {
+    padding: 16px 18px;
+  }
+  /* Bar label column was 90px which doesn't fit "Perplexity" comfortably
+     on narrow screens — let the label own its content width and the
+     fill take the rest. */
+  .bar-row {
+    grid-template-columns: minmax(72px, max-content) 1fr 40px;
+    gap: 12px;
+  }
+  .sparkline-wrap {
+    padding: 18px 18px 10px;
+  }
 }

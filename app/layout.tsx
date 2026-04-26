@@ -1,5 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
+
+// Without this, mobile browsers render the page at desktop width (~980px)
+// and shrink it to fit the screen, defeating every responsive media query.
+// device-width + initialScale 1 makes mobile render at the actual viewport
+// size so CSS sees the real device width.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#f8f7f4",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://autopitch.me"),
