@@ -460,8 +460,10 @@ button {
 }
 
 .social-btn {
-  width: 44px;
-  height: 44px;
+  /* Capsule shape — wider than tall reads as a "link" rather than an
+     "action button", which fits since each one is just an outbound link. */
+  width: 64px;
+  height: 36px;
   border-radius: 999px;
   background: var(--surface);
   border: 1px solid var(--border);
