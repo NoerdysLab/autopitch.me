@@ -4,7 +4,7 @@ import Link from "next/link";
 import AIButtons from "@/components/AIButtons";
 import Avatar from "@/components/Avatar";
 import { isValidHandle } from "@/lib/handle";
-import { buildPrompt } from "@/lib/prompt";
+import { buildClaudePrompt, buildLinkedInPrompt } from "@/lib/prompt";
 import { getSession } from "@/lib/session";
 import { getUserByHandle } from "@/lib/users";
 
@@ -22,7 +22,14 @@ export default async function PitchPage({ params }: PageProps) {
   const proto = h.get("x-forwarded-proto") ?? "https";
   const origin = `${proto}://${host}`;
 
-  const prompt = buildPrompt({ name: user.name, handle: user.handle, origin });
+  const claudePrompt = buildClaudePrompt({
+    name: user.name,
+    handle: user.handle,
+    origin,
+  });
+  const linkedinPrompt = user.linkedin_url
+    ? buildLinkedInPrompt({ name: user.name, linkedinUrl: user.linkedin_url })
+    : null;
 
   const session = await getSession();
   const isOwner = session.email === user.email;
@@ -39,7 +46,11 @@ export default async function PitchPage({ params }: PageProps) {
         <Avatar name={user.name} photoUrl={user.photo_url} />
         <h1>{user.name}</h1>
         {user.tagline && <p className="tagline">{user.tagline}</p>}
-        <AIButtons prompt={prompt} handle={user.handle} />
+        <AIButtons
+          claudePrompt={claudePrompt}
+          linkedinPrompt={linkedinPrompt}
+          handle={user.handle}
+        />
       </main>
       <footer className="site-footer">
         <div className="container">autopitch.me</div>

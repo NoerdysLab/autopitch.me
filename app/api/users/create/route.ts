@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { put } from "@vercel/blob";
 import { sendWelcomeEmail } from "@/lib/email";
+import { normalizeLinkedIn } from "@/lib/linkedin";
 import { getSession } from "@/lib/session";
 import { makeTakedownToken } from "@/lib/takedown";
 import { createUser, getUserByEmail } from "@/lib/users";
@@ -50,6 +51,7 @@ async function handle(req: Request) {
   const name = String(form.get("name") ?? "").trim();
   const tagline = String(form.get("tagline") ?? "").trim();
   const resume = String(form.get("resume_md") ?? "").trim();
+  const linkedinRaw = String(form.get("linkedin_url") ?? "").trim();
   const photo = form.get("photo");
 
   if (name.length < 1 || name.length > 80) {
@@ -63,6 +65,14 @@ async function handle(req: Request) {
   }
   if (Buffer.byteLength(resume, "utf-8") > MAX_RESUME_BYTES) {
     return NextResponse.json({ error: "resume_too_large" }, { status: 400 });
+  }
+
+  let linkedinUrl: string | null = null;
+  if (linkedinRaw) {
+    linkedinUrl = normalizeLinkedIn(linkedinRaw);
+    if (!linkedinUrl) {
+      return NextResponse.json({ error: "linkedin_invalid" }, { status: 400 });
+    }
   }
 
   let photoUrl: string | null = null;
@@ -97,6 +107,7 @@ async function handle(req: Request) {
     tagline: tagline || null,
     resume_md: resume,
     photo_url: photoUrl,
+    linkedin_url: linkedinUrl,
   });
 
   // Welcome email with the takedown kill switch. Built on origin so it works

@@ -440,6 +440,14 @@ button {
   margin-left: 4px;
 }
 
+.field-hint {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-dim);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .input {
   display: block;
   width: 100%;

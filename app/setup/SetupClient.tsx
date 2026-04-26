@@ -8,6 +8,8 @@ const ERRORS: Record<string, string> = {
   tagline_too_long: "Tagline is too long (120 characters max).",
   resume_too_short: "Paste a real résumé — at least 40 characters.",
   resume_too_large: "Résumé is too large (64KB max).",
+  linkedin_invalid:
+    "That doesn't look like a LinkedIn profile URL. Should look like linkedin.com/in/yourname.",
   not_authenticated: "Session lost — please sign in again.",
   photo_bad_type: "Photo must be JPEG, PNG, or WebP.",
   photo_too_large: "Photo is too large (5MB max).",
@@ -20,6 +22,7 @@ export default function SetupClient({ email }: { email: string }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState("");
   const [tagline, setTagline] = useState("");
+  const [linkedin, setLinkedin] = useState("");
   const [resume, setResume] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -64,6 +67,7 @@ export default function SetupClient({ email }: { email: string }) {
       const data = new FormData();
       data.append("name", name);
       data.append("tagline", tagline);
+      data.append("linkedin_url", linkedin);
       data.append("resume_md", resume);
       if (photo) data.append("photo", photo);
 
@@ -161,6 +165,23 @@ export default function SetupClient({ email }: { email: string }) {
             value={tagline}
             onChange={(e) => setTagline(e.target.value)}
           />
+        </label>
+
+        <label className="field">
+          <span>LinkedIn URL <em>optional, but recommended</em></span>
+          <input
+            className="input"
+            type="url"
+            maxLength={200}
+            placeholder="linkedin.com/in/yourname"
+            value={linkedin}
+            onChange={(e) => setLinkedin(e.target.value)}
+          />
+          <span className="field-hint">
+            Used by ChatGPT, Perplexity, and Gemini — they don't reliably
+            fetch your résumé link, but they can search LinkedIn. Without it,
+            only the Claude button shows on your page.
+          </span>
         </label>
 
         <label className="field">

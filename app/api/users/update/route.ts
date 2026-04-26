@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
+import { normalizeLinkedIn } from "@/lib/linkedin";
 import { getSession } from "@/lib/session";
 import { getUserByEmail, updateUser } from "@/lib/users";
 
@@ -41,6 +42,7 @@ async function handle(req: Request) {
   const name = String(form.get("name") ?? "").trim();
   const tagline = String(form.get("tagline") ?? "").trim();
   const resume = String(form.get("resume_md") ?? "").trim();
+  const linkedinRaw = String(form.get("linkedin_url") ?? "").trim();
   const photo = form.get("photo");
   const removePhoto = form.get("remove_photo") === "1";
 
@@ -55,6 +57,15 @@ async function handle(req: Request) {
   }
   if (Buffer.byteLength(resume, "utf-8") > MAX_RESUME_BYTES) {
     return NextResponse.json({ error: "resume_too_large" }, { status: 400 });
+  }
+
+  // Empty input clears the URL; non-empty must normalize to a valid LinkedIn.
+  let linkedinUrl: string | null = null;
+  if (linkedinRaw) {
+    linkedinUrl = normalizeLinkedIn(linkedinRaw);
+    if (!linkedinUrl) {
+      return NextResponse.json({ error: "linkedin_invalid" }, { status: 400 });
+    }
   }
 
   // Photo state machine: replace > remove > keep.
@@ -88,6 +99,7 @@ async function handle(req: Request) {
     tagline: tagline || null,
     resume_md: resume,
     photo_url: photoUrl,
+    linkedin_url: linkedinUrl,
   });
 
   return NextResponse.json({ ok: true, redirect: `/${updated.handle}` });

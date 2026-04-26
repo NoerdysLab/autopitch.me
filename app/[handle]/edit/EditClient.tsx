@@ -8,6 +8,8 @@ const ERRORS: Record<string, string> = {
   tagline_too_long: "Tagline is too long (120 characters max).",
   resume_too_short: "Paste a real résumé — at least 40 characters.",
   resume_too_large: "Résumé is too large (64KB max).",
+  linkedin_invalid:
+    "That doesn't look like a LinkedIn profile URL. Should look like linkedin.com/in/yourname.",
   not_authenticated: "Session lost — please sign in again.",
   not_found: "Your account couldn't be found. Sign in again.",
   photo_bad_type: "Photo must be JPEG, PNG, or WebP.",
@@ -20,6 +22,7 @@ type Props = {
   handle: string;
   name: string;
   tagline: string;
+  linkedinUrl: string;
   resumeMd: string;
   photoUrl: string | null;
 };
@@ -30,6 +33,7 @@ export default function EditClient(props: Props) {
 
   const [name, setName] = useState(props.name);
   const [tagline, setTagline] = useState(props.tagline);
+  const [linkedin, setLinkedin] = useState(props.linkedinUrl);
   const [resume, setResume] = useState(props.resumeMd);
   const [newPhoto, setNewPhoto] = useState<File | null>(null);
   const [newPhotoPreview, setNewPhotoPreview] = useState<string | null>(null);
@@ -94,6 +98,7 @@ export default function EditClient(props: Props) {
       const data = new FormData();
       data.append("name", name);
       data.append("tagline", tagline);
+      data.append("linkedin_url", linkedin);
       data.append("resume_md", resume);
       if (newPhoto) data.append("photo", newPhoto);
       if (removePhoto && !newPhoto) data.append("remove_photo", "1");
@@ -237,6 +242,23 @@ export default function EditClient(props: Props) {
             value={tagline}
             onChange={(e) => setTagline(e.target.value)}
           />
+        </label>
+
+        <label className="field">
+          <span>LinkedIn URL <em>optional, but recommended</em></span>
+          <input
+            className="input"
+            type="url"
+            maxLength={200}
+            placeholder="linkedin.com/in/yourname"
+            value={linkedin}
+            onChange={(e) => setLinkedin(e.target.value)}
+          />
+          <span className="field-hint">
+            Used by ChatGPT, Perplexity, and Gemini — they don't reliably
+            fetch your résumé link, but they can search LinkedIn. Without it,
+            only the Claude button shows on your page.
+          </span>
         </label>
 
         <label className="field">

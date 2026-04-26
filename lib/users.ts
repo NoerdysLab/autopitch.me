@@ -12,6 +12,7 @@ export type User = {
   name: string;
   tagline: string | null;
   photo_url: string | null;
+  linkedin_url: string | null;
   resume_md: string;
   created_at: string;
   deleted_at: string | null;
@@ -24,6 +25,7 @@ const SAMPLE: User = {
   name: "Alex Chen",
   tagline: "CS @ Stanford · ML systems & founder energy",
   photo_url: null,
+  linkedin_url: "https://www.linkedin.com/in/alex-chen-stanford",
   resume_md: `# Alex Chen
 
 CS @ Stanford (B.S. expected 2026). Interested in ML systems, fast inference,
@@ -80,7 +82,7 @@ export async function getUserByHandle(handle: string): Promise<User | null> {
 
   const sql = getSql();
   const rows = (await sql`
-    SELECT id, email, handle, name, tagline, photo_url, resume_md,
+    SELECT id, email, handle, name, tagline, photo_url, linkedin_url, resume_md,
            created_at, deleted_at
     FROM users
     WHERE handle = ${handle} AND deleted_at IS NULL
@@ -96,7 +98,7 @@ export async function getUserByEmail(email: string): Promise<User | null> {
 
   const sql = getSql();
   const rows = (await sql`
-    SELECT id, email, handle, name, tagline, photo_url, resume_md,
+    SELECT id, email, handle, name, tagline, photo_url, linkedin_url, resume_md,
            created_at, deleted_at
     FROM users
     WHERE lower(email) = ${email.toLowerCase()} AND deleted_at IS NULL
@@ -111,7 +113,7 @@ export async function getUserById(id: string): Promise<User | null> {
   }
   const sql = getSql();
   const rows = (await sql`
-    SELECT id, email, handle, name, tagline, photo_url, resume_md,
+    SELECT id, email, handle, name, tagline, photo_url, linkedin_url, resume_md,
            created_at, deleted_at
     FROM users
     WHERE id = ${id}::uuid
@@ -134,6 +136,7 @@ export type UpdateUserInput = {
   tagline: string | null;
   resume_md: string;
   photo_url: string | null;
+  linkedin_url: string | null;
 };
 
 // Flat update of the editable profile fields. Caller decides what photo_url
@@ -149,9 +152,10 @@ export async function updateUser(
     SET name = ${input.name},
         tagline = ${input.tagline},
         resume_md = ${input.resume_md},
-        photo_url = ${input.photo_url}
+        photo_url = ${input.photo_url},
+        linkedin_url = ${input.linkedin_url}
     WHERE id = ${id}::uuid AND deleted_at IS NULL
-    RETURNING id, email, handle, name, tagline, photo_url, resume_md,
+    RETURNING id, email, handle, name, tagline, photo_url, linkedin_url, resume_md,
               created_at, deleted_at
   `) as User[];
   if (!rows[0]) throw new Error("User not found or deleted");
@@ -164,6 +168,7 @@ export type CreateUserInput = {
   tagline: string | null;
   resume_md: string;
   photo_url: string | null;
+  linkedin_url: string | null;
 };
 
 // Creates a user with a fresh handle, retrying on the (unlikely but possible)
@@ -176,16 +181,17 @@ export async function createUser(input: CreateUserInput): Promise<User> {
     const handle = generateHandle();
     try {
       const rows = (await sql`
-        INSERT INTO users (email, handle, name, tagline, photo_url, resume_md)
+        INSERT INTO users (email, handle, name, tagline, photo_url, linkedin_url, resume_md)
         VALUES (
           ${input.email.toLowerCase()},
           ${handle},
           ${input.name},
           ${input.tagline},
           ${input.photo_url},
+          ${input.linkedin_url},
           ${input.resume_md}
         )
-        RETURNING id, email, handle, name, tagline, photo_url, resume_md,
+        RETURNING id, email, handle, name, tagline, photo_url, linkedin_url, resume_md,
                   created_at, deleted_at
       `) as User[];
       return rows[0];

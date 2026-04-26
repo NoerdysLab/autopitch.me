@@ -40,6 +40,7 @@ export default async function EditPage({
           handle={user.handle}
           name={user.name}
           tagline={user.tagline ?? ""}
+          linkedinUrl={user.linkedin_url ?? ""}
           resumeMd={user.resume_md}
           photoUrl={user.photo_url}
         />

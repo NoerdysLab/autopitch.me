@@ -5,7 +5,13 @@ import { useEffect, useState } from "react";
 type Platform = "claude" | "chatgpt" | "perplexity" | "gemini";
 
 type Props = {
-  prompt: string;
+  // The prompt the Claude button copies / deep-links with — points at the
+  // autopitch.me raw-markdown URL since Claude reliably fetches URLs.
+  claudePrompt: string;
+  // The prompt the ChatGPT/Perplexity/Gemini buttons use — points at the
+  // user's LinkedIn URL. Null if they haven't set one, in which case the
+  // "more" reveal is hidden entirely (only the Claude button shows).
+  linkedinPrompt: string | null;
   handle: string;
 };
 
@@ -77,24 +83,37 @@ async function copy(text: string): Promise<boolean> {
   }
 }
 
-export default function AIButtons({ prompt, handle }: Props) {
+export default function AIButtons({
+  claudePrompt,
+  linkedinPrompt,
+  handle,
+}: Props) {
   const [showMore, setShowMore] = useState(false);
   const [moreReady, setMoreReady] = useState(false);
   const [toast, setToast] = useState<{ id: number; msg: string } | null>(null);
 
+  // Only arm the "more" reveal if there's actually something to reveal —
+  // i.e., the user gave us a LinkedIn URL for the non-Claude buttons.
+  const hasMore = linkedinPrompt !== null;
+
   useEffect(() => {
+    if (!hasMore) return;
     const t = setTimeout(() => setMoreReady(true), 5000);
     return () => clearTimeout(t);
-  }, []);
+  }, [hasMore]);
 
   function flash(msg: string) {
     setToast({ id: Date.now(), msg });
   }
 
   async function handleClick(platform: Platform) {
+    // Each platform copies the prompt that's most likely to actually work for
+    // it: Claude gets the autopitch URL, the others get the LinkedIn URL.
+    const text = platform === "claude" ? claudePrompt : (linkedinPrompt ?? claudePrompt);
+
     // Log first so the request is in flight before any navigation.
     logClick(handle, platform);
-    const ok = await copy(prompt);
+    const ok = await copy(text);
     const mobile = isMobile();
 
     if (mobile) {
@@ -108,7 +127,7 @@ export default function AIButtons({ prompt, handle }: Props) {
     }
 
     flash(ok ? `Copied — opening ${LABELS[platform]}…` : "Copy failed");
-    window.open(URLS[platform](prompt), "_blank", "noopener,noreferrer");
+    window.open(URLS[platform](text), "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -117,7 +136,7 @@ export default function AIButtons({ prompt, handle }: Props) {
         <AIBtn platform="claude" onClick={handleClick} />
       </div>
 
-      {!showMore && (
+      {hasMore && !showMore && (
         <button
           type="button"
           className={`more-btn ${moreReady ? "visible" : ""}`}
@@ -128,11 +147,13 @@ export default function AIButtons({ prompt, handle }: Props) {
         </button>
       )}
 
-      <div className={`reveal ${showMore ? "open" : ""}`} aria-hidden={!showMore}>
-        <AIBtn platform="chatgpt" onClick={handleClick} />
-        <AIBtn platform="perplexity" onClick={handleClick} />
-        <AIBtn platform="gemini" onClick={handleClick} />
-      </div>
+      {hasMore && (
+        <div className={`reveal ${showMore ? "open" : ""}`} aria-hidden={!showMore}>
+          <AIBtn platform="chatgpt" onClick={handleClick} />
+          <AIBtn platform="perplexity" onClick={handleClick} />
+          <AIBtn platform="gemini" onClick={handleClick} />
+        </div>
+      )}
 
       <div className="toast-host" aria-live="polite">
         {toast && (
