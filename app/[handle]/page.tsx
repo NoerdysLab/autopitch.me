@@ -24,7 +24,7 @@ export default async function PitchPage({ params }: PageProps) {
 
   const claudePrompt = buildClaudePrompt({
     name: user.name,
-    handle: user.handle,
+    resumeSlug: user.resume_slug,
     origin,
   });
   const linkedinPrompt = user.linkedin_url

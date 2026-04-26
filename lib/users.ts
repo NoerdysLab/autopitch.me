@@ -1,5 +1,5 @@
 import { getSql, isDbConfigured } from "./db";
-import { generateHandle } from "./handle";
+import { generateHandle, generateResumeSlug } from "./handle";
 
 // User store. Queries Neon when DATABASE_URL is set; falls back to an
 // in-memory sample so the /x4k9 demo keeps rendering before the database
@@ -9,6 +9,7 @@ export type User = {
   id: string;
   email: string;
   handle: string;
+  resume_slug: string;
   name: string;
   tagline: string | null;
   photo_url: string | null;
@@ -22,6 +23,7 @@ const SAMPLE: User = {
   id: "sample",
   email: "alex@stanford.edu",
   handle: "x4k9",
+  resume_slug: "samplea1b2c3",
   name: "Alex Chen",
   tagline: "CS @ Stanford · ML systems & founder energy",
   photo_url: null,
@@ -82,7 +84,7 @@ export async function getUserByHandle(handle: string): Promise<User | null> {
 
   const sql = getSql();
   const rows = (await sql`
-    SELECT id, email, handle, name, tagline, photo_url, linkedin_url, resume_md,
+    SELECT id, email, handle, resume_slug, name, tagline, photo_url, linkedin_url, resume_md,
            created_at, deleted_at
     FROM users
     WHERE handle = ${handle} AND deleted_at IS NULL
@@ -98,10 +100,25 @@ export async function getUserByEmail(email: string): Promise<User | null> {
 
   const sql = getSql();
   const rows = (await sql`
-    SELECT id, email, handle, name, tagline, photo_url, linkedin_url, resume_md,
+    SELECT id, email, handle, resume_slug, name, tagline, photo_url, linkedin_url, resume_md,
            created_at, deleted_at
     FROM users
     WHERE lower(email) = ${email.toLowerCase()} AND deleted_at IS NULL
+    LIMIT 1
+  `) as User[];
+  return rows[0] ?? null;
+}
+
+export async function getUserByResumeSlug(slug: string): Promise<User | null> {
+  if (!isDbConfigured()) {
+    return slug === SAMPLE.resume_slug ? SAMPLE : null;
+  }
+  const sql = getSql();
+  const rows = (await sql`
+    SELECT id, email, handle, resume_slug, name, tagline, photo_url, linkedin_url, resume_md,
+           created_at, deleted_at
+    FROM users
+    WHERE resume_slug = ${slug} AND deleted_at IS NULL
     LIMIT 1
   `) as User[];
   return rows[0] ?? null;
@@ -113,7 +130,7 @@ export async function getUserById(id: string): Promise<User | null> {
   }
   const sql = getSql();
   const rows = (await sql`
-    SELECT id, email, handle, name, tagline, photo_url, linkedin_url, resume_md,
+    SELECT id, email, handle, resume_slug, name, tagline, photo_url, linkedin_url, resume_md,
            created_at, deleted_at
     FROM users
     WHERE id = ${id}::uuid
@@ -155,7 +172,7 @@ export async function updateUser(
         photo_url = ${input.photo_url},
         linkedin_url = ${input.linkedin_url}
     WHERE id = ${id}::uuid AND deleted_at IS NULL
-    RETURNING id, email, handle, name, tagline, photo_url, linkedin_url, resume_md,
+    RETURNING id, email, handle, resume_slug, name, tagline, photo_url, linkedin_url, resume_md,
               created_at, deleted_at
   `) as User[];
   if (!rows[0]) throw new Error("User not found or deleted");
@@ -179,27 +196,30 @@ export async function createUser(input: CreateUserInput): Promise<User> {
 
   for (let attempt = 0; attempt < 8; attempt++) {
     const handle = generateHandle();
+    const resumeSlug = generateResumeSlug();
     try {
       const rows = (await sql`
-        INSERT INTO users (email, handle, name, tagline, photo_url, linkedin_url, resume_md)
+        INSERT INTO users (email, handle, resume_slug, name, tagline, photo_url, linkedin_url, resume_md)
         VALUES (
           ${input.email.toLowerCase()},
           ${handle},
+          ${resumeSlug},
           ${input.name},
           ${input.tagline},
           ${input.photo_url},
           ${input.linkedin_url},
           ${input.resume_md}
         )
-        RETURNING id, email, handle, name, tagline, photo_url, linkedin_url, resume_md,
+        RETURNING id, email, handle, resume_slug, name, tagline, photo_url, linkedin_url, resume_md,
                   created_at, deleted_at
       `) as User[];
       return rows[0];
     } catch (err) {
-      // 23505 = unique_violation. If it's the handle index, retry with a new
-      // handle; otherwise (e.g. email already exists) bubble up.
+      // 23505 = unique_violation. If it's the handle or slug index, retry
+      // with new randoms; otherwise (e.g. email already exists) bubble up.
       const msg = err instanceof Error ? err.message : String(err);
       if (msg.includes("users_handle_active_idx")) continue;
+      if (msg.includes("users_resume_slug_idx")) continue;
       throw err;
     }
   }

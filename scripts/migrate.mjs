@@ -30,15 +30,32 @@ for (const file of files) {
 
   console.log(`▸ ${file}  (${statements.length} statement${statements.length === 1 ? "" : "s"})`);
   for (const stmt of statements) {
-    try {
-      await sql.query(stmt);
-    } catch (err) {
-      console.error(`  ✗ failed: ${err.message}`);
-      console.error(`  statement: ${stmt.slice(0, 120)}${stmt.length > 120 ? "..." : ""}`);
-      process.exit(1);
-    }
+    await runWithRetry(stmt);
   }
   console.log(`  ✓ done`);
+}
+
+// Neon's HTTP endpoint occasionally returns transient 503 "DNS cache
+// overflow" errors from sandboxed hosts. Back off and retry a few times
+// before giving up — almost always works on the second attempt.
+async function runWithRetry(stmt, attempts = 4) {
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      await sql.query(stmt);
+      return;
+    } catch (err) {
+      const msg = err?.message ?? String(err);
+      const transient = /DNS cache overflow|fetch failed|ECONNRESET|503/i.test(msg);
+      if (!transient || i === attempts) {
+        console.error(`  ✗ failed: ${msg}`);
+        console.error(`  statement: ${stmt.slice(0, 120)}${stmt.length > 120 ? "..." : ""}`);
+        process.exit(1);
+      }
+      const wait = 500 * 2 ** (i - 1);
+      console.warn(`  … transient (${msg.slice(0, 60)}), retrying in ${wait}ms`);
+      await new Promise((r) => setTimeout(r, wait));
+    }
+  }
 }
 
 console.log("\nAll migrations applied.");

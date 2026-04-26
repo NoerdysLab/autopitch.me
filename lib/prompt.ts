@@ -12,11 +12,11 @@
 
 export function buildClaudePrompt(opts: {
   name: string;
-  handle: string;
+  resumeSlug: string;
   origin?: string;
 }): string {
   const host = (opts.origin ?? "https://autopitch.me").replace(/\/$/, "");
-  return `Tell me about ${opts.name} using ${cleanHost(host)}/${opts.handle}r and how they can be useful to me or my business based on what you know about me`;
+  return `Tell me about ${opts.name} using ${cleanHost(host)}/r/${opts.resumeSlug} and how they can be useful to me or my business based on what you know about me`;
 }
 
 export function buildLinkedInPrompt(opts: {
@@ -25,9 +25,6 @@ export function buildLinkedInPrompt(opts: {
 }): string {
   return `Tell me about ${opts.name} using their LinkedIn at ${opts.linkedinUrl} and how they can be useful to me or my business based on what you know about me`;
 }
-
-// Back-compat alias — older imports may still reference buildPrompt.
-export const buildPrompt = buildClaudePrompt;
 
 // Strip the scheme AND any `www.` prefix so the prompt always reads
 // "autopitch.me/x4k9r" — Vercel's apex/www redirect leaves headers().get('host')
