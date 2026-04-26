@@ -9,9 +9,13 @@ export function buildPrompt(opts: {
 }): string {
   const host = (opts.origin ?? "https://autopitch.me").replace(/\/$/, "");
   // The `r` suffix on the handle points at the raw markdown resume.
-  return `Tell me about ${opts.name} using ${stripScheme(host)}/${opts.handle}r and how they can be useful to me or my business based on what you know about me`;
+  return `Tell me about ${opts.name} using ${cleanHost(host)}/${opts.handle}r and how they can be useful to me or my business based on what you know about me`;
 }
 
-function stripScheme(s: string): string {
-  return s.replace(/^https?:\/\//, "");
+// Strip the scheme AND any `www.` prefix so the prompt always reads
+// "autopitch.me/x4k9r" — Vercel's apex/www redirect leaves headers().get('host')
+// as `www.autopitch.me` for some requests, and we don't want that leaking
+// into the user-visible prompt text.
+function cleanHost(s: string): string {
+  return s.replace(/^https?:\/\//, "").replace(/^www\./, "");
 }
