@@ -68,6 +68,16 @@ button {
   font-weight: 600;
   font-size: 17px;
   letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Logo inside the wordmark link. Sized by height; width follows the
+   logo's ~8:1 aspect ratio so it doesn't blow out the header. */
+.site-header .wordmark img {
+  display: block;
+  height: 24px;
+  width: auto;
 }
 
 /* Wordmark on the left, nav on the right — gives the four-pill nav the
@@ -1162,6 +1172,9 @@ button {
   }
   .site-header-centered .container {
     align-items: center;
+  }
+  .site-header .wordmark img {
+    height: 20px;
   }
 
   /* Bigger tap targets on phones — 32px pills are a hair small for a

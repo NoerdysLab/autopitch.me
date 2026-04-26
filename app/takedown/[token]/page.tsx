@@ -22,7 +22,10 @@ export default async function TakedownPage({
     <div className="page">
       <header className="site-header">
         <div className="container">
-          <Link href="/" className="wordmark">warmpitch.me</Link>
+          <Link href="/" className="wordmark" aria-label="warmpitch.me">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" alt="warmpitch.me" />
+          </Link>
         </div>
       </header>
 

@@ -9,8 +9,9 @@ export default function OwnerHeader({ handle }: { handle: string }) {
   return (
     <header className="site-header">
       <div className="container">
-        <Link href="/" className="wordmark">
-          warmpitch.me
+        <Link href="/" className="wordmark" aria-label="warmpitch.me">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="warmpitch.me" />
         </Link>
         <div className="nav">
           <Link href={`/${handle}`} className="nav-pill">view page</Link>

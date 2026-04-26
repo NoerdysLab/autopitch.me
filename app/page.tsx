@@ -16,8 +16,9 @@ export default async function Home() {
     <div className="page">
       <header className="site-header site-header-centered">
         <div className="container">
-          <Link href="/" className="wordmark">
-            warmpitch.me
+          <Link href="/" className="wordmark" aria-label="warmpitch.me">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" alt="warmpitch.me" />
           </Link>
         </div>
       </header>
