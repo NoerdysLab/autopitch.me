@@ -21,7 +21,7 @@ function options(): SessionOptions {
   }
   return {
     password,
-    cookieName: "autopitch_session",
+    cookieName: "warmpitch_session",
     cookieOptions: {
       httpOnly: true,
       sameSite: "lax",

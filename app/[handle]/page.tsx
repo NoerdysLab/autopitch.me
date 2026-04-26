@@ -20,7 +20,7 @@ export default async function PitchPage({ params }: PageProps) {
   if (!user || user.deleted_at) notFound();
 
   const h = await headers();
-  const host = h.get("host") ?? "autopitch.me";
+  const host = h.get("host") ?? "warmpitch.me";
   const proto = h.get("x-forwarded-proto") ?? "https";
   const origin = `${proto}://${host}`;
 
@@ -62,7 +62,7 @@ export default async function PitchPage({ params }: PageProps) {
         />
       </main>
       <footer className="site-footer">
-        <div className="container">autopitch.me</div>
+        <div className="container">warmpitch.me</div>
       </footer>
     </div>
   );

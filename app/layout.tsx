@@ -12,10 +12,10 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://autopitch.me"),
+  metadataBase: new URL("https://warmpitch.me"),
   title: {
-    default: "autopitch.me",
-    template: "%s · autopitch.me",
+    default: "warmpitch.me",
+    template: "%s · warmpitch.me",
   },
   description:
     "Paste your résumé, get a short link. Anyone clicking it opens an AI that pitches you to them.",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: "autopitch.me",
+    siteName: "warmpitch.me",
   },
   twitter: {
     card: "summary_large_image",

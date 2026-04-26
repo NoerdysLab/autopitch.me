@@ -39,7 +39,7 @@ export default function Confirm({ token, handle, name }: Props) {
     <div className="auth-card">
       <h1>Take down your page?</h1>
       <p className="auth-sub">
-        This removes <strong>autopitch.me/{handle}</strong> ({name}). Anyone
+        This removes <strong>warmpitch.me/{handle}</strong> ({name}). Anyone
         visiting it will get a 404. Click logs are kept for analytics; the
         résumé and photo are soft-deleted and won't be served.
       </p>

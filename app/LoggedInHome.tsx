@@ -20,7 +20,7 @@ export default function LoggedInHome({
         </section>
 
         <section className="me-card">
-          <div className="me-link">autopitch.me/{handle}</div>
+          <div className="me-link">warmpitch.me/{handle}</div>
           <div className="me-actions">
             <Link href={`/${handle}`} className="cta cta-secondary">View page</Link>
             <Link href={`/${handle}/edit`} className="cta cta-secondary">Edit</Link>
@@ -30,7 +30,7 @@ export default function LoggedInHome({
       </main>
 
       <footer className="site-footer site-footer-tight">
-        <div className="container">autopitch.me · made for Stanford</div>
+        <div className="container">warmpitch.me · made for Stanford</div>
       </footer>
     </div>
   );

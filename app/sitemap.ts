@@ -7,13 +7,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
   return [
     {
-      url: "https://autopitch.me",
+      url: "https://warmpitch.me",
       lastModified: now,
       changeFrequency: "monthly",
       priority: 1,
     },
     {
-      url: "https://autopitch.me/signup",
+      url: "https://warmpitch.me/signup",
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.5,

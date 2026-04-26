@@ -35,8 +35,8 @@ export default async function Dashboard() {
         <section className="dash-hero">
           <div className="dash-hero-label">Your page</div>
           <div className="dash-link-row">
-            <span className="dash-link">autopitch.me/{user.handle}</span>
-            <CopyLink url={`https://autopitch.me/${user.handle}`} />
+            <span className="dash-link">warmpitch.me/{user.handle}</span>
+            <CopyLink url={`https://warmpitch.me/${user.handle}`} />
             <Link href={`/${user.handle}`} className="nav-link">view</Link>
             <Link href={`/${user.handle}/edit`} className="nav-link">edit</Link>
           </div>
@@ -87,7 +87,7 @@ export default async function Dashboard() {
             <h3>Danger zone</h3>
             <p>
               Delete your page permanently.{" "}
-              <strong>autopitch.me/{user.handle}</strong> will return 404 and
+              <strong>warmpitch.me/{user.handle}</strong> will return 404 and
               your résumé and photo are removed from view. You can sign up
               again later with the same email if you change your mind — you'll
               get a new handle.
@@ -98,7 +98,7 @@ export default async function Dashboard() {
       </main>
 
       <footer className="site-footer">
-        <div className="container">autopitch.me</div>
+        <div className="container">warmpitch.me</div>
       </footer>
     </div>
   );

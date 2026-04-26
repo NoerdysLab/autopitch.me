@@ -6,7 +6,7 @@ type Platform = "claude" | "chatgpt" | "perplexity" | "gemini";
 
 type Props = {
   // The prompt the Claude button copies / deep-links with — points at the
-  // autopitch.me raw-markdown URL since Claude reliably fetches URLs.
+  // warmpitch.me raw-markdown URL since Claude reliably fetches URLs.
   claudePrompt: string;
   // The prompt the ChatGPT/Perplexity/Gemini buttons use — points at the
   // user's LinkedIn URL. Null if they haven't set one, in which case the
@@ -112,7 +112,7 @@ export default function AIButtons({
 
   async function handleClick(platform: Platform) {
     // Each platform copies the prompt that's most likely to actually work for
-    // it: Claude gets the autopitch URL, the others get the LinkedIn URL.
+    // it: Claude gets the warmpitch URL, the others get the LinkedIn URL.
     const text = platform === "claude" ? claudePrompt : (linkedinPrompt ?? claudePrompt);
 
     // Log first so the request is in flight before any navigation.

@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       {
         error: "send_failed",
         message:
-          "Couldn't deliver the code email. If you're using the Resend test sender, it only delivers to your resend.com signup address. Verify autopitch.me as a sending domain in Resend to fix this.",
+          "Couldn't deliver the code email. If you're using the Resend test sender, it only delivers to your resend.com signup address. Verify warmpitch.me as a sending domain in Resend to fix this.",
         detail,
       },
       { status: 502 },

@@ -17,7 +17,7 @@ export default async function Home() {
       <header className="site-header site-header-centered">
         <div className="container">
           <Link href="/" className="wordmark">
-            autopitch.me
+            warmpitch.me
           </Link>
         </div>
       </header>
@@ -42,7 +42,7 @@ export default async function Home() {
             <div className="step">
               <div className="step-num">2</div>
               <h3>Get your link</h3>
-              <p>autopitch.me/x4k9 — short, memorable, yours.</p>
+              <p>warmpitch.me/x4k9 — short, memorable, yours.</p>
             </div>
             <div className="step">
               <div className="step-num">3</div>
@@ -66,7 +66,7 @@ export default async function Home() {
       </main>
 
       <footer className="site-footer site-footer-tight">
-        <div className="container">autopitch.me · made for Stanford</div>
+        <div className="container">warmpitch.me · made for Stanford</div>
       </footer>
     </div>
   );

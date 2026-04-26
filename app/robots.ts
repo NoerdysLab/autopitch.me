@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-// autopitch.me is built for AI agents fetching pages on demand, NOT for
+// warmpitch.me is built for AI agents fetching pages on demand, NOT for
 // search engine results. Block the well-known indexers so we never show up
 // in Google/Bing/etc., while leaving the door open for AI fetchers
 // (ClaudeBot, GPTBot, ChatGPT-User, PerplexityBot, etc.) and the social
@@ -40,6 +40,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/setup", "/signup"],
       },
     ],
-    host: "https://autopitch.me",
+    host: "https://warmpitch.me",
   };
 }

@@ -15,7 +15,7 @@ export default function DeleteButton({ handle }: { handle: string }) {
   async function deletePage() {
     if (
       !confirm(
-        `Delete autopitch.me/${handle} permanently? This can't be undone — your link will 404 immediately.`,
+        `Delete warmpitch.me/${handle} permanently? This can't be undone — your link will 404 immediately.`,
       )
     ) {
       return;

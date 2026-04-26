@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { isValidHandle } from "@/lib/handle";
 import { getUserByHandle } from "@/lib/users";
 
-export const alt = "autopitch.me pitch page";
+export const alt = "warmpitch.me pitch page";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -44,7 +44,7 @@ export default async function HandleOG({
             display: "flex",
           }}
         >
-          autopitch.me
+          warmpitch.me
         </div>
 
         <div
@@ -111,7 +111,7 @@ export default async function HandleOG({
             justifyContent: "center",
           }}
         >
-          autopitch.me/{user.handle}
+          warmpitch.me/{user.handle}
         </div>
       </div>
     ),

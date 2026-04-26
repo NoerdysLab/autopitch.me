@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 // 1200x630 is the size every social card shows at 1:1 — anything else gets
 // downscaled or letter-boxed. Keep this file in sync with /[handle]/opengraph-image.tsx.
-export const alt = "autopitch.me — your résumé, one click away from any AI";
+export const alt = "warmpitch.me — your résumé, one click away from any AI";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -21,7 +21,7 @@ export default async function HomeOG() {
         }}
       >
         <div style={{ fontSize: 32, fontWeight: 600, letterSpacing: "-0.01em", display: "flex" }}>
-          autopitch.me
+          warmpitch.me
         </div>
 
         <div

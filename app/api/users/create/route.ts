@@ -139,7 +139,7 @@ async function handle(req: Request) {
   // Welcome email with the takedown kill switch. Built on origin so it works
   // whether the request comes in via the apex domain or a vercel.app URL.
   const h = await headers();
-  const host = h.get("host") ?? "autopitch.me";
+  const host = h.get("host") ?? "warmpitch.me";
   const proto = h.get("x-forwarded-proto") ?? "https";
   const origin = `${proto}://${host}`;
   const takedownUrl = `${origin}/takedown/${makeTakedownToken(user.id)}`;

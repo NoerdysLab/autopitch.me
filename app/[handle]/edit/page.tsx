@@ -43,7 +43,7 @@ export default async function EditPage({
       </main>
 
       <footer className="site-footer">
-        <div className="container">autopitch.me</div>
+        <div className="container">warmpitch.me</div>
       </footer>
     </div>
   );

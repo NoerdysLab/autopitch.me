@@ -10,7 +10,7 @@ export default function OwnerHeader({ handle }: { handle: string }) {
     <header className="site-header">
       <div className="container">
         <Link href="/" className="wordmark">
-          autopitch.me
+          warmpitch.me
         </Link>
         <div className="nav">
           <Link href={`/${handle}`} className="nav-pill">view page</Link>

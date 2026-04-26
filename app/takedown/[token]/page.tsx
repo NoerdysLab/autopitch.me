@@ -22,7 +22,7 @@ export default async function TakedownPage({
     <div className="page">
       <header className="site-header">
         <div className="container">
-          <Link href="/" className="wordmark">autopitch.me</Link>
+          <Link href="/" className="wordmark">warmpitch.me</Link>
         </div>
       </header>
 
@@ -31,7 +31,7 @@ export default async function TakedownPage({
           <div className="auth-card">
             <h1>Already taken down</h1>
             <p className="auth-sub">
-              <strong>autopitch.me/{user.handle}</strong> was removed{" "}
+              <strong>warmpitch.me/{user.handle}</strong> was removed{" "}
               {fmtDate(user.deleted_at)}. Visiting it now returns 404.
             </p>
             <p className="auth-sub" style={{ marginTop: 16 }}>
@@ -49,7 +49,7 @@ export default async function TakedownPage({
       </main>
 
       <footer className="site-footer">
-        <div className="container">autopitch.me</div>
+        <div className="container">warmpitch.me</div>
       </footer>
     </div>
   );

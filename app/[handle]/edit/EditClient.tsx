@@ -142,7 +142,7 @@ export default function EditClient(props: Props) {
   async function deletePage() {
     if (
       !confirm(
-        `Delete autopitch.me/${props.handle} permanently? This can't be undone — your link will 404 immediately.`,
+        `Delete warmpitch.me/${props.handle} permanently? This can't be undone — your link will 404 immediately.`,
       )
     ) {
       return;
@@ -175,7 +175,7 @@ export default function EditClient(props: Props) {
       <form onSubmit={submit}>
         <h1>Edit your page</h1>
         <p className="auth-sub">
-          Live at <strong>autopitch.me/{props.handle}</strong>. Changes go
+          Live at <strong>warmpitch.me/{props.handle}</strong>. Changes go
           live the instant you save.
         </p>
 
@@ -334,7 +334,7 @@ export default function EditClient(props: Props) {
       <div className="danger-zone">
         <h3>Danger zone</h3>
         <p>
-          Delete your page permanently. <strong>autopitch.me/{props.handle}</strong>{" "}
+          Delete your page permanently. <strong>warmpitch.me/{props.handle}</strong>{" "}
           will return 404 and your résumé and photo are removed from view. You
           can sign up again later with the same email if you change your mind —
           you'll get a new handle.
