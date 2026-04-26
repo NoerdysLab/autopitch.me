@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
-import Link from "next/link";
 import AIButtons from "@/components/AIButtons";
 import Avatar from "@/components/Avatar";
+import OwnerHeader from "@/components/OwnerHeader";
 import SocialButtons from "@/components/SocialButtons";
 import { isValidHandle } from "@/lib/handle";
 import { buildClaudePrompt, buildLinkedInPrompt } from "@/lib/prompt";
@@ -43,12 +43,7 @@ export default async function PitchPage({ params }: PageProps) {
 
   return (
     <div className="page" style={themeStyle}>
-      {isOwner && (
-        <div className="owner-bar container">
-          <Link href={`/${user.handle}/edit`} className="nav-link">edit</Link>
-          <Link href="/dashboard" className="nav-link">dashboard</Link>
-        </div>
-      )}
+      {isOwner && <OwnerHeader handle={user.handle} show={["edit", "dashboard"]} />}
       <main className="pitch">
         <Avatar name={user.name} photoUrl={user.photo_url} />
         <h1>{user.name}</h1>
@@ -57,11 +52,13 @@ export default async function PitchPage({ params }: PageProps) {
           claudePrompt={claudePrompt}
           linkedinPrompt={linkedinPrompt}
           handle={user.handle}
-        />
-        <SocialButtons
-          linkedinUrl={user.linkedin_url}
-          instagramUrl={user.instagram_url}
-          xUrl={user.x_url}
+          belowClaude={
+            <SocialButtons
+              linkedinUrl={user.linkedin_url}
+              instagramUrl={user.instagram_url}
+              xUrl={user.x_url}
+            />
+          }
         />
       </main>
       <footer className="site-footer">

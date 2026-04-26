@@ -89,11 +89,6 @@ export default function SignupClient({
             Enter your <strong>@stanford.edu</strong> email — we'll send a
             6-digit code.
           </p>
-          <div className="notice notice-tight">
-            <strong>Heads up:</strong> Claude is the only AI that opens your
-            résumé link directly today. The others use your LinkedIn URL,
-            which you can add on the next screen.
-          </div>
           <input
             type="email"
             inputMode="email"

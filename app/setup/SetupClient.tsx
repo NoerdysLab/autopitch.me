@@ -119,6 +119,12 @@ export default function SetupClient({ email }: { email: string }) {
           for you on the next screen.
         </p>
 
+        <div className="notice notice-tight">
+          <strong>Heads up:</strong> Claude is the only AI that reliably
+          opens your résumé link directly today. ChatGPT, Perplexity, and
+          Gemini also work — they pitch from the LinkedIn URL below.
+        </div>
+
         <div className="photo-row">
           <label
             htmlFor="photo-input"

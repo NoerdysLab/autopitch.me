@@ -61,7 +61,7 @@ button {
 }
 
 .site-header {
-  padding: 32px 0;
+  padding: 24px 0;
 }
 
 .site-header .wordmark {
@@ -70,12 +70,43 @@ button {
   letter-spacing: -0.01em;
 }
 
+/* Center the wordmark even when there's a nav on the right; the
+   3-column grid keeps the wordmark dead-centered without depending on
+   the nav's width. */
+.site-header .container {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+}
+.site-header .wordmark {
+  grid-column: 2;
+  text-align: center;
+}
+.site-header .nav {
+  grid-column: 3;
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+/* Home page header has no nav — the grid still centers it correctly. */
+.site-header-centered .container {
+  grid-template-columns: 1fr;
+}
+.site-header-centered .wordmark {
+  grid-column: 1;
+}
+
 .site-footer {
   margin-top: auto;
-  padding: 48px 0 32px;
+  padding: 28px 0 24px;
   color: var(--text-dim);
   font-size: 13px;
   text-align: center;
+}
+
+.site-footer-tight {
+  padding: 16px 0 20px;
 }
 
 /* ─── home ────────────────────────────────────────────────────────── */
@@ -83,6 +114,14 @@ button {
 .hero {
   padding: 80px 0 48px;
   text-align: center;
+}
+
+.hero-tight {
+  padding: 32px 0 24px;
+}
+
+.hero-tight h1 {
+  font-size: clamp(34px, 5.5vw, 52px);
 }
 
 .hero h1 {
@@ -106,6 +145,30 @@ button {
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   padding: 56px 0 48px;
+}
+
+.steps-tight {
+  padding: 8px 0 16px;
+}
+
+.steps-tight .step {
+  padding: 18px 18px;
+}
+
+.steps-tight .step h3 {
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.steps-tight .step p {
+  font-size: 13px;
+}
+
+.steps-tight .step-num {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+  margin-bottom: 10px;
 }
 
 @media (max-width: 640px) {
@@ -163,6 +226,16 @@ button {
   align-items: center;
   gap: 14px;
   padding: 16px 0 96px;
+}
+
+.cta-row-tight {
+  padding: 16px 0 24px;
+  gap: 10px;
+}
+
+.cta-foot {
+  color: var(--text-dim);
+  font-size: 12px;
 }
 
 /* ─── inline notice (e.g. "heads up: only Claude works fully") ───── */
@@ -366,7 +439,8 @@ button {
   flex-wrap: wrap;
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 0.5s var(--spring), transform 0.5s var(--spring);
+  /* Slow, gentle bloom — 1.4s feels intentional rather than snapping in. */
+  transition: opacity 1.4s var(--spring), transform 1.4s var(--spring);
   pointer-events: none;
 }
 
@@ -383,7 +457,7 @@ button {
   justify-content: center;
   align-items: center;
   gap: 14px;
-  margin-top: 32px;
+  /* No margin-top — sits inside .ai-stack, which already has flex gap. */
 }
 
 .social-btn {
@@ -754,6 +828,33 @@ button {
 
 .nav-link:hover {
   color: var(--text);
+}
+
+/* Outlined pill used for owner navigation (edit / dashboard / view page /
+   sign out). Stands out more than .nav-link without competing with the
+   primary CTA. */
+.nav-pill {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 14px;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s var(--spring), box-shadow 0.3s var(--spring),
+    background 0.2s ease;
+  box-shadow: 0 1px 2px var(--shadow);
+}
+
+.nav-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px var(--shadow-hover);
+  background: var(--bg);
 }
 
 .signout-form {

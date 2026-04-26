@@ -1,6 +1,6 @@
 import { redirect, notFound } from "next/navigation";
-import Link from "next/link";
 import EditClient from "./EditClient";
+import OwnerHeader from "@/components/OwnerHeader";
 import { isValidHandle } from "@/lib/handle";
 import { getSession } from "@/lib/session";
 import { getUserByHandle } from "@/lib/users";
@@ -26,14 +26,7 @@ export default async function EditPage({
 
   return (
     <div className="page">
-      <header className="site-header">
-        <div className="container header-row">
-          <Link href="/" className="wordmark">autopitch.me</Link>
-          <Link href={`/${user.handle}`} className="nav-link">
-            view page →
-          </Link>
-        </div>
-      </header>
+      <OwnerHeader handle={user.handle} show={["view", "dashboard"]} />
 
       <main className="container auth">
         <EditClient

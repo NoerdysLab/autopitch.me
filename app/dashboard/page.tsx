@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import CopyLink from "./CopyLink";
 import DeleteButton from "./DeleteButton";
+import OwnerHeader from "@/components/OwnerHeader";
 import { getStatsForHandle } from "@/lib/clicks";
 import { getSession } from "@/lib/session";
 import { getUserByEmail } from "@/lib/users";
@@ -28,16 +29,7 @@ export default async function Dashboard() {
 
   return (
     <div className="page">
-      <header className="site-header">
-        <div className="container header-row">
-          <Link href="/" className="wordmark">autopitch.me</Link>
-          <form action="/api/auth/logout" method="post" className="signout-form">
-            <button type="submit" className="nav-link" formAction="/api/auth/logout">
-              sign out
-            </button>
-          </form>
-        </div>
-      </header>
+      <OwnerHeader handle={user.handle} show={["view", "edit"]} />
 
       <main className="container dash">
         <section className="dash-hero">

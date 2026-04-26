@@ -14,7 +14,7 @@ export default async function Home() {
 
   return (
     <div className="page">
-      <header className="site-header">
+      <header className="site-header site-header-centered">
         <div className="container">
           <Link href="/" className="wordmark">
             autopitch.me
@@ -23,7 +23,7 @@ export default async function Home() {
       </header>
 
       <main>
-        <section className="container hero">
+        <section className="container hero hero-tight">
           <h1>Your résumé, one click away from any AI.</h1>
           <p className="lede">
             Paste your résumé. Get a short link. Anyone you share it with
@@ -33,7 +33,7 @@ export default async function Home() {
         </section>
 
         <section className="container">
-          <div className="steps">
+          <div className="steps steps-tight">
             <div className="step">
               <div className="step-num">1</div>
               <h3>Paste your résumé</h3>
@@ -52,26 +52,20 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="container">
-          <div className="notice">
-            <strong>Heads up:</strong> Claude is the only AI that reliably
-            opens your résumé link directly today. ChatGPT, Perplexity, and
-            Gemini also work — they pitch you from your LinkedIn URL, which
-            you'll add during signup.
-          </div>
-        </section>
-
-        <section className="container cta-row">
+        <section className="container cta-row cta-row-tight">
           <Link href="/signup" className="cta">
             Claim your page
           </Link>
           <span className="cta-sub">
             Stanford students, free. <Link href="/x4k9">see a sample →</Link>
           </span>
+          <span className="cta-foot">
+            Actively updating as LLMs improve — currently designed for Claude.
+          </span>
         </section>
       </main>
 
-      <footer className="site-footer">
+      <footer className="site-footer site-footer-tight">
         <div className="container">autopitch.me · made for Stanford</div>
       </footer>
     </div>

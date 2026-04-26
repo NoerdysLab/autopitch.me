@@ -1,4 +1,5 @@
 import Link from "next/link";
+import OwnerHeader from "@/components/OwnerHeader";
 
 export default function LoggedInHome({
   handle,
@@ -10,14 +11,7 @@ export default function LoggedInHome({
   const firstName = name.split(/\s+/)[0];
   return (
     <div className="page">
-      <header className="site-header">
-        <div className="container header-row">
-          <Link href="/" className="wordmark">autopitch.me</Link>
-          <form action="/api/auth/logout" method="post" className="signout-form">
-            <button type="submit" className="nav-link">sign out</button>
-          </form>
-        </div>
-      </header>
+      <OwnerHeader handle={handle} show={["view", "edit", "dashboard"]} />
 
       <main className="container">
         <section className="hero hero-tight">
@@ -35,7 +29,7 @@ export default function LoggedInHome({
         </section>
       </main>
 
-      <footer className="site-footer">
+      <footer className="site-footer site-footer-tight">
         <div className="container">autopitch.me · made for Stanford</div>
       </footer>
     </div>

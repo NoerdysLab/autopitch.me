@@ -13,6 +13,9 @@ type Props = {
   // "more" reveal is hidden entirely (only the Claude button shows).
   linkedinPrompt: string | null;
   handle: string;
+  // Optional slot for whatever should sit between Claude and the
+  // "more" pill — currently the social-profile icon row.
+  belowClaude?: React.ReactNode;
 };
 
 // Fire-and-forget click log. Uses sendBeacon so the request survives the
@@ -87,6 +90,7 @@ export default function AIButtons({
   claudePrompt,
   linkedinPrompt,
   handle,
+  belowClaude,
 }: Props) {
   const [showMore, setShowMore] = useState(false);
   const [moreReady, setMoreReady] = useState(false);
@@ -135,6 +139,8 @@ export default function AIButtons({
       <div className="ai-row">
         <AIBtn platform="claude" onClick={handleClick} />
       </div>
+
+      {belowClaude}
 
       {/* `more` is always rendered so its 36px slot stays reserved — that
           way clicking it doesn't shift the Claude button up or down. We
