@@ -460,11 +460,12 @@ button {
 }
 
 .social-btn {
-  /* Capsule shape — wider than tall reads as a "link" rather than an
-     "action button", which fits since each one is just an outbound link. */
+  /* Rounded rectangle — proportionally matches the AI buttons' 28px-on-96px
+     squircle (~30% of the smaller dimension) so the two rows feel like
+     siblings without being identical. */
   width: 64px;
   height: 36px;
-  border-radius: 999px;
+  border-radius: 12px;
   background: var(--surface);
   border: 1px solid var(--border);
   display: flex;
