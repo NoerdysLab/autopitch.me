@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import CopyLink from "./CopyLink";
+import DeleteButton from "./DeleteButton";
 import { getStatsForHandle } from "@/lib/clicks";
 import { getSession } from "@/lib/session";
 import { getUserByEmail } from "@/lib/users";
@@ -89,11 +90,18 @@ export default async function Dashboard() {
           )}
         </section>
 
-        <section className="dash-section dash-danger">
-          <p className="dash-empty">
-            Need to take your page down? Use the link in your welcome email
-            (subject: <em>Your autopitch.me page is live</em>).
-          </p>
+        <section className="dash-section">
+          <div className="danger-zone">
+            <h3>Danger zone</h3>
+            <p>
+              Delete your page permanently.{" "}
+              <strong>autopitch.me/{user.handle}</strong> will return 404 and
+              your résumé and photo are removed from view. You can sign up
+              again later with the same email if you change your mind — you'll
+              get a new handle.
+            </p>
+            <DeleteButton handle={user.handle} />
+          </div>
         </section>
       </main>
 
