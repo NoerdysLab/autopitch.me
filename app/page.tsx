@@ -1,6 +1,17 @@
 import Link from "next/link";
+import LoggedInHome from "./LoggedInHome";
+import { getSession } from "@/lib/session";
+import { getUserByEmail } from "@/lib/users";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getSession();
+  const user = session.email ? await getUserByEmail(session.email) : null;
+
+  // Logged-in & onboarded → show the user's command center.
+  if (user && !user.deleted_at) {
+    return <LoggedInHome handle={user.handle} name={user.name} />;
+  }
+
   return (
     <div className="page">
       <header className="site-header">

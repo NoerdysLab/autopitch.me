@@ -129,6 +129,35 @@ export async function softDeleteUser(id: string): Promise<void> {
   `;
 }
 
+export type UpdateUserInput = {
+  name: string;
+  tagline: string | null;
+  resume_md: string;
+  photo_url: string | null;
+};
+
+// Flat update of the editable profile fields. Caller decides what photo_url
+// to pass — the route handler handles "no change / replace / remove" logic
+// before calling here, so this stays a dumb writer.
+export async function updateUser(
+  id: string,
+  input: UpdateUserInput,
+): Promise<User> {
+  const sql = getSql();
+  const rows = (await sql`
+    UPDATE users
+    SET name = ${input.name},
+        tagline = ${input.tagline},
+        resume_md = ${input.resume_md},
+        photo_url = ${input.photo_url}
+    WHERE id = ${id}::uuid AND deleted_at IS NULL
+    RETURNING id, email, handle, name, tagline, photo_url, resume_md,
+              created_at, deleted_at
+  `) as User[];
+  if (!rows[0]) throw new Error("User not found or deleted");
+  return rows[0];
+}
+
 export type CreateUserInput = {
   email: string;
   name: string;

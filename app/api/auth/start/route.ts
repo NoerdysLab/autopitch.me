@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { startOtp, STANFORD_RE } from "@/lib/otp";
+import { RateLimitedError, startOtp, STANFORD_RE } from "@/lib/otp";
 import { getSession } from "@/lib/session";
 
 export async function POST(req: Request) {
@@ -21,9 +21,15 @@ export async function POST(req: Request) {
   try {
     await startOtp(email);
   } catch (err) {
-    // Most common cause in the wild: Resend's test sender will only deliver
-    // to the email used at resend.com signup until a domain is verified. We
-    // surface the underlying message so the dashboard error is actionable.
+    if (err instanceof RateLimitedError) {
+      return NextResponse.json(
+        {
+          error: "rate_limited",
+          message: `Too many code requests. Wait a few minutes and try again.`,
+        },
+        { status: 429 },
+      );
+    }
     const detail = err instanceof Error ? err.message : "unknown";
     console.error("[/api/auth/start] send failed:", detail);
     return NextResponse.json(

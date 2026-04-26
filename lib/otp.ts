@@ -4,8 +4,19 @@ import { sendOtpEmail } from "./email";
 
 const CODE_TTL_MINUTES = 10;
 const MAX_ATTEMPTS = 5;
+const RATE_LIMIT_PER_EMAIL = 5;
+const RATE_LIMIT_WINDOW_MINUTES = 10;
 
 export const STANFORD_RE = /^[^\s@]+@stanford\.edu$/i;
+
+export class RateLimitedError extends Error {
+  retryMinutes: number;
+  constructor(retryMinutes: number) {
+    super(`rate_limited`);
+    this.name = "RateLimitedError";
+    this.retryMinutes = retryMinutes;
+  }
+}
 
 function hashCode(code: string): string {
   return createHash("sha256").update(code).digest("hex");
@@ -16,8 +27,21 @@ function generateCode(): string {
 }
 
 export async function startOtp(email: string): Promise<void> {
-  const code = generateCode();
   const sql = getSql();
+
+  // Rate limit: cap at RATE_LIMIT_PER_EMAIL OTP requests per email per
+  // RATE_LIMIT_WINDOW_MINUTES so a bad actor can't burn through codes
+  // (or spam the user's inbox).
+  const recent = (await sql`
+    SELECT count(*)::int AS n FROM otp_codes
+    WHERE lower(email) = ${email.toLowerCase()}
+      AND created_at > now() - (${RATE_LIMIT_WINDOW_MINUTES} || ' minutes')::interval
+  `) as Array<{ n: number }>;
+  if ((recent[0]?.n ?? 0) >= RATE_LIMIT_PER_EMAIL) {
+    throw new RateLimitedError(RATE_LIMIT_WINDOW_MINUTES);
+  }
+
+  const code = generateCode();
   await sql`
     INSERT INTO otp_codes (email, code_hash, expires_at)
     VALUES (
