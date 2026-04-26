@@ -433,9 +433,11 @@ button {
   flex-wrap: wrap;
   opacity: 0;
   transform: translateY(8px);
-  /* Pull tighter against the "more" pill — the default 16px ai-stack gap
-     felt like too much breathing room above this row. */
-  margin-top: -10px;
+  /* Pull the reveal up so its top edge sits where the "more" pill was —
+     when more fades out and reveal fades in, the eye reads it as a
+     swap-in-place rather than two stacked rows. -52px = -36px (more
+     pill height) + -16px (ai-stack gap above the reveal). */
+  margin-top: -52px;
   /* Slow, gentle bloom — 1.4s feels intentional rather than snapping in. */
   transition: opacity 1.4s var(--spring), transform 1.4s var(--spring);
   pointer-events: none;
