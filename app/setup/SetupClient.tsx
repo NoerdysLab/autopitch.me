@@ -77,7 +77,14 @@ export default function SetupClient({ email }: { email: string }) {
           router.push(payload.redirect);
           return;
         }
-        setError(ERRORS[payload?.error] ?? "Something went wrong. Try again.");
+        // Prefer a friendly translation, fall back to whatever the API said
+        // so we surface the real cause instead of a useless generic message.
+        const msg =
+          ERRORS[payload?.error] ??
+          payload?.message ??
+          (payload?.error ? `Error: ${payload.error}` : null) ??
+          `Something went wrong (HTTP ${res.status}).`;
+        setError(msg);
         return;
       }
       router.push(payload.redirect);

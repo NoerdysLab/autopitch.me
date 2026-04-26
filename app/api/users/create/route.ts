@@ -12,6 +12,21 @@ const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 const PHOTO_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
 export async function POST(req: Request) {
+  try {
+    return await handle(req);
+  } catch (err) {
+    // Top-level safety net so an uncaught error becomes a structured 500
+    // the client can display, instead of the empty-body Vercel error page.
+    const detail = err instanceof Error ? err.message : String(err);
+    console.error("[/api/users/create] uncaught:", detail);
+    return NextResponse.json(
+      { error: "internal", message: detail },
+      { status: 500 },
+    );
+  }
+}
+
+async function handle(req: Request) {
   const session = await getSession();
   if (!session.email) {
     return NextResponse.json({ error: "not_authenticated" }, { status: 401 });
