@@ -52,6 +52,15 @@ export default async function Home() {
           </div>
         </section>
 
+        <section className="container">
+          <div className="notice">
+            <strong>Heads up:</strong> Claude is the only AI that reliably
+            opens your résumé link directly today. ChatGPT, Perplexity, and
+            Gemini also work — they pitch you from your LinkedIn URL, which
+            you'll add during signup.
+          </div>
+        </section>
+
         <section className="container cta-row">
           <Link href="/signup" className="cta">
             Claim your page

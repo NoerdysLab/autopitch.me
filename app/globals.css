@@ -161,6 +161,34 @@ button {
   padding: 16px 0 96px;
 }
 
+/* ─── inline notice (e.g. "heads up: only Claude works fully") ───── */
+
+.notice {
+  max-width: 560px;
+  margin: 32px auto 8px;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.notice strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.notice-tight {
+  margin: 0 0 20px;
+  max-width: none;
+  font-size: 13px;
+  padding: 12px 14px;
+  background: var(--bg);
+}
+
 .cta {
   display: inline-flex;
   align-items: center;
