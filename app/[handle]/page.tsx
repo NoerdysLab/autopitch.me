@@ -7,6 +7,7 @@ import SocialButtons from "@/components/SocialButtons";
 import { isValidHandle } from "@/lib/handle";
 import { buildClaudePrompt, buildLinkedInPrompt } from "@/lib/prompt";
 import { getSession } from "@/lib/session";
+import { THEMES } from "@/lib/themes";
 import { getUserByHandle } from "@/lib/users";
 
 type PageProps = { params: Promise<{ handle: string }> };
@@ -35,8 +36,13 @@ export default async function PitchPage({ params }: PageProps) {
   const session = await getSession();
   const isOwner = session.email === user.email;
 
+  // Override --bg only on this page so the pitch surface picks up the
+  // user's chosen theme. All other variables (text, surface, border)
+  // stay at the global defaults.
+  const themeStyle = { "--bg": THEMES[user.theme].bg } as React.CSSProperties;
+
   return (
-    <div className="page">
+    <div className="page" style={themeStyle}>
       {isOwner && (
         <div className="owner-bar container">
           <Link href={`/${user.handle}/edit`} className="nav-link">edit</Link>

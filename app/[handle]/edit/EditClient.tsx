@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import ThemePicker from "@/components/ThemePicker";
+import type { ThemeKey } from "@/lib/themes";
 
 const ERRORS: Record<string, string> = {
   name_required: "Add your name (1–80 characters).",
@@ -29,6 +31,7 @@ type Props = {
   linkedinUrl: string;
   instagramUrl: string;
   xUrl: string;
+  theme: ThemeKey;
   resumeMd: string;
   photoUrl: string | null;
 };
@@ -42,6 +45,7 @@ export default function EditClient(props: Props) {
   const [linkedin, setLinkedin] = useState(props.linkedinUrl);
   const [instagram, setInstagram] = useState(props.instagramUrl);
   const [x, setX] = useState(props.xUrl);
+  const [theme, setTheme] = useState<ThemeKey>(props.theme);
   const [resume, setResume] = useState(props.resumeMd);
   const [newPhoto, setNewPhoto] = useState<File | null>(null);
   const [newPhotoPreview, setNewPhotoPreview] = useState<string | null>(null);
@@ -109,6 +113,7 @@ export default function EditClient(props: Props) {
       data.append("linkedin_url", linkedin);
       data.append("instagram_url", instagram);
       data.append("x_url", x);
+      data.append("theme", theme);
       data.append("resume_md", resume);
       if (newPhoto) data.append("photo", newPhoto);
       if (removePhoto && !newPhoto) data.append("remove_photo", "1");
@@ -297,6 +302,11 @@ export default function EditClient(props: Props) {
             Each social you provide shows up as a small icon on your page.
           </span>
         </label>
+
+        <div className="field">
+          <span>Background</span>
+          <ThemePicker value={theme} onChange={setTheme} />
+        </div>
 
         <label className="field">
           <span>Résumé (markdown)</span>

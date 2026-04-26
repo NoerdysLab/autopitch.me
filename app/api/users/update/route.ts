@@ -4,6 +4,7 @@ import { put } from "@vercel/blob";
 import { normalizeLinkedIn } from "@/lib/linkedin";
 import { normalizeInstagram, normalizeX } from "@/lib/socials";
 import { getSession } from "@/lib/session";
+import { isValidTheme } from "@/lib/themes";
 import { getUserByEmail, updateUser } from "@/lib/users";
 
 const MAX_RESUME_BYTES = 64 * 1024;
@@ -87,6 +88,9 @@ async function handle(req: Request) {
     }
   }
 
+  const themeRaw = form.get("theme");
+  const theme = isValidTheme(themeRaw) ? themeRaw : user.theme;
+
   // Photo state machine: replace > remove > keep.
   let photoUrl: string | null = user.photo_url;
   if (photo instanceof File && photo.size > 0) {
@@ -121,6 +125,7 @@ async function handle(req: Request) {
     linkedin_url: linkedinUrl,
     instagram_url: instagramUrl,
     x_url: xUrl,
+    theme,
   });
 
   return NextResponse.json({ ok: true, redirect: `/${updated.handle}` });

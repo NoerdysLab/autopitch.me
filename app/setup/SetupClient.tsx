@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import ThemePicker from "@/components/ThemePicker";
+import { DEFAULT_THEME, type ThemeKey } from "@/lib/themes";
 
 const ERRORS: Record<string, string> = {
   name_required: "Add your name (1–80 characters).",
@@ -29,6 +31,7 @@ export default function SetupClient({ email }: { email: string }) {
   const [linkedin, setLinkedin] = useState("");
   const [instagram, setInstagram] = useState("");
   const [x, setX] = useState("");
+  const [theme, setTheme] = useState<ThemeKey>(DEFAULT_THEME);
   const [resume, setResume] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -76,6 +79,7 @@ export default function SetupClient({ email }: { email: string }) {
       data.append("linkedin_url", linkedin);
       data.append("instagram_url", instagram);
       data.append("x_url", x);
+      data.append("theme", theme);
       data.append("resume_md", resume);
       if (photo) data.append("photo", photo);
 
@@ -218,6 +222,11 @@ export default function SetupClient({ email }: { email: string }) {
             Each social you provide shows up as a small icon on your page.
           </span>
         </label>
+
+        <div className="field">
+          <span>Background</span>
+          <ThemePicker value={theme} onChange={setTheme} />
+        </div>
 
         <label className="field">
           <span>Résumé (markdown)</span>

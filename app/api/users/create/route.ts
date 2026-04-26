@@ -7,6 +7,7 @@ import { normalizeLinkedIn } from "@/lib/linkedin";
 import { normalizeInstagram, normalizeX } from "@/lib/socials";
 import { getSession } from "@/lib/session";
 import { makeTakedownToken } from "@/lib/takedown";
+import { DEFAULT_THEME, isValidTheme } from "@/lib/themes";
 import { createUser, getUserByEmail } from "@/lib/users";
 
 const MAX_RESUME_BYTES = 64 * 1024;
@@ -94,6 +95,9 @@ async function handle(req: Request) {
     }
   }
 
+  const themeRaw = form.get("theme");
+  const theme = isValidTheme(themeRaw) ? themeRaw : DEFAULT_THEME;
+
   let photoUrl: string | null = null;
   if (photo instanceof File && photo.size > 0) {
     if (!PHOTO_TYPES.has(photo.type)) {
@@ -129,6 +133,7 @@ async function handle(req: Request) {
     linkedin_url: linkedinUrl,
     instagram_url: instagramUrl,
     x_url: xUrl,
+    theme,
   });
 
   // Welcome email with the takedown kill switch. Built on origin so it works

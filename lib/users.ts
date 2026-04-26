@@ -1,5 +1,6 @@
 import { getSql, isDbConfigured } from "./db";
 import { generateHandle, generateResumeSlug } from "./handle";
+import { DEFAULT_THEME, type ThemeKey } from "./themes";
 
 // User store. Queries Neon when DATABASE_URL is set; falls back to an
 // in-memory sample so the /x4k9 demo keeps rendering before the database
@@ -16,6 +17,7 @@ export type User = {
   linkedin_url: string | null;
   instagram_url: string | null;
   x_url: string | null;
+  theme: ThemeKey;
   resume_md: string;
   created_at: string;
   deleted_at: string | null;
@@ -32,6 +34,7 @@ const SAMPLE: User = {
   linkedin_url: "https://www.linkedin.com/in/alex-chen-stanford",
   instagram_url: null,
   x_url: null,
+  theme: "warm",
   resume_md: `# Alex Chen
 
 CS @ Stanford (B.S. expected 2026). Interested in ML systems, fast inference,
@@ -89,7 +92,7 @@ export async function getUserByHandle(handle: string): Promise<User | null> {
   const sql = getSql();
   const rows = (await sql`
     SELECT id, email, handle, resume_slug, name, tagline, photo_url,
-           linkedin_url, instagram_url, x_url, resume_md,
+           linkedin_url, instagram_url, x_url, theme, resume_md,
            created_at, deleted_at
     FROM users
     WHERE handle = ${handle} AND deleted_at IS NULL
@@ -106,7 +109,7 @@ export async function getUserByEmail(email: string): Promise<User | null> {
   const sql = getSql();
   const rows = (await sql`
     SELECT id, email, handle, resume_slug, name, tagline, photo_url,
-           linkedin_url, instagram_url, x_url, resume_md,
+           linkedin_url, instagram_url, x_url, theme, resume_md,
            created_at, deleted_at
     FROM users
     WHERE lower(email) = ${email.toLowerCase()} AND deleted_at IS NULL
@@ -122,7 +125,7 @@ export async function getUserByResumeSlug(slug: string): Promise<User | null> {
   const sql = getSql();
   const rows = (await sql`
     SELECT id, email, handle, resume_slug, name, tagline, photo_url,
-           linkedin_url, instagram_url, x_url, resume_md,
+           linkedin_url, instagram_url, x_url, theme, resume_md,
            created_at, deleted_at
     FROM users
     WHERE resume_slug = ${slug} AND deleted_at IS NULL
@@ -138,7 +141,7 @@ export async function getUserById(id: string): Promise<User | null> {
   const sql = getSql();
   const rows = (await sql`
     SELECT id, email, handle, resume_slug, name, tagline, photo_url,
-           linkedin_url, instagram_url, x_url, resume_md,
+           linkedin_url, instagram_url, x_url, theme, resume_md,
            created_at, deleted_at
     FROM users
     WHERE id = ${id}::uuid
@@ -164,6 +167,7 @@ export type UpdateUserInput = {
   linkedin_url: string | null;
   instagram_url: string | null;
   x_url: string | null;
+  theme: ThemeKey;
 };
 
 // Flat update of the editable profile fields. Caller decides what photo_url
@@ -182,10 +186,11 @@ export async function updateUser(
         photo_url = ${input.photo_url},
         linkedin_url = ${input.linkedin_url},
         instagram_url = ${input.instagram_url},
-        x_url = ${input.x_url}
+        x_url = ${input.x_url},
+        theme = ${input.theme}
     WHERE id = ${id}::uuid AND deleted_at IS NULL
     RETURNING id, email, handle, resume_slug, name, tagline, photo_url,
-              linkedin_url, instagram_url, x_url, resume_md,
+              linkedin_url, instagram_url, x_url, theme, resume_md,
               created_at, deleted_at
   `) as User[];
   if (!rows[0]) throw new Error("User not found or deleted");
@@ -201,6 +206,7 @@ export type CreateUserInput = {
   linkedin_url: string | null;
   instagram_url: string | null;
   x_url: string | null;
+  theme?: ThemeKey;
 };
 
 // Creates a user with a fresh handle, retrying on the (unlikely but possible)
@@ -215,7 +221,7 @@ export async function createUser(input: CreateUserInput): Promise<User> {
     try {
       const rows = (await sql`
         INSERT INTO users (email, handle, resume_slug, name, tagline, photo_url,
-                           linkedin_url, instagram_url, x_url, resume_md)
+                           linkedin_url, instagram_url, x_url, theme, resume_md)
         VALUES (
           ${input.email.toLowerCase()},
           ${handle},
@@ -226,10 +232,11 @@ export async function createUser(input: CreateUserInput): Promise<User> {
           ${input.linkedin_url},
           ${input.instagram_url},
           ${input.x_url},
+          ${input.theme ?? DEFAULT_THEME},
           ${input.resume_md}
         )
         RETURNING id, email, handle, resume_slug, name, tagline, photo_url,
-                  linkedin_url, instagram_url, x_url, resume_md,
+                  linkedin_url, instagram_url, x_url, theme, resume_md,
                   created_at, deleted_at
       `) as User[];
       return rows[0];
