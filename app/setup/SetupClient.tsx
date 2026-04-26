@@ -194,6 +194,11 @@ export default function SetupClient({ email }: { email: string }) {
             value={resume}
             onChange={(e) => setResume(e.target.value)}
           />
+          <span className="field-hint">
+            New to markdown? Send your existing résumé (PDF, doc, anything)
+            to ChatGPT or Claude and ask: <em>"convert this to markdown."</em>
+            Paste the result here.
+          </span>
         </label>
 
         <button type="submit" className="cta" disabled={busy}>
