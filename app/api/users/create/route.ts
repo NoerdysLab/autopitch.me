@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { put } from "@vercel/blob";
 import { sendWelcomeEmail } from "@/lib/email";
 import { normalizeLinkedIn } from "@/lib/linkedin";
+import { normalizeInstagram, normalizeX } from "@/lib/socials";
 import { getSession } from "@/lib/session";
 import { makeTakedownToken } from "@/lib/takedown";
 import { createUser, getUserByEmail } from "@/lib/users";
@@ -75,6 +76,24 @@ async function handle(req: Request) {
     }
   }
 
+  const instagramRaw = String(form.get("instagram_url") ?? "").trim();
+  let instagramUrl: string | null = null;
+  if (instagramRaw) {
+    instagramUrl = normalizeInstagram(instagramRaw);
+    if (!instagramUrl) {
+      return NextResponse.json({ error: "instagram_invalid" }, { status: 400 });
+    }
+  }
+
+  const xRaw = String(form.get("x_url") ?? "").trim();
+  let xUrl: string | null = null;
+  if (xRaw) {
+    xUrl = normalizeX(xRaw);
+    if (!xUrl) {
+      return NextResponse.json({ error: "x_invalid" }, { status: 400 });
+    }
+  }
+
   let photoUrl: string | null = null;
   if (photo instanceof File && photo.size > 0) {
     if (!PHOTO_TYPES.has(photo.type)) {
@@ -108,6 +127,8 @@ async function handle(req: Request) {
     resume_md: resume,
     photo_url: photoUrl,
     linkedin_url: linkedinUrl,
+    instagram_url: instagramUrl,
+    x_url: xUrl,
   });
 
   // Welcome email with the takedown kill switch. Built on origin so it works

@@ -372,6 +372,42 @@ button {
   pointer-events: auto;
 }
 
+/* ─── social buttons ──────────────────────────────────────────────── */
+
+.socials {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.social-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px var(--social-shadow-rest, var(--shadow));
+  transition: transform 0.4s var(--spring),
+    box-shadow 0.4s var(--spring),
+    background 0.2s ease;
+}
+
+.social-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px var(--social-shadow-hover, var(--shadow-hover));
+}
+
+.social-mark {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
 /* ─── toast ───────────────────────────────────────────────────────── */
 
 .toast-host {

@@ -41,6 +41,8 @@ export default async function EditPage({
           name={user.name}
           tagline={user.tagline ?? ""}
           linkedinUrl={user.linkedin_url ?? ""}
+          instagramUrl={user.instagram_url ?? ""}
+          xUrl={user.x_url ?? ""}
           resumeMd={user.resume_md}
           photoUrl={user.photo_url}
         />

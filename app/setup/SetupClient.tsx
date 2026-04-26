@@ -10,6 +10,10 @@ const ERRORS: Record<string, string> = {
   resume_too_large: "Résumé is too large (64KB max).",
   linkedin_invalid:
     "That doesn't look like a LinkedIn profile URL. Should look like linkedin.com/in/yourname.",
+  instagram_invalid:
+    "That doesn't look like an Instagram profile URL. Should look like instagram.com/yourname.",
+  x_invalid:
+    "That doesn't look like an X profile URL. Should look like x.com/yourname.",
   not_authenticated: "Session lost — please sign in again.",
   photo_bad_type: "Photo must be JPEG, PNG, or WebP.",
   photo_too_large: "Photo is too large (5MB max).",
@@ -23,6 +27,8 @@ export default function SetupClient({ email }: { email: string }) {
   const [name, setName] = useState("");
   const [tagline, setTagline] = useState("");
   const [linkedin, setLinkedin] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [x, setX] = useState("");
   const [resume, setResume] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -68,6 +74,8 @@ export default function SetupClient({ email }: { email: string }) {
       data.append("name", name);
       data.append("tagline", tagline);
       data.append("linkedin_url", linkedin);
+      data.append("instagram_url", instagram);
+      data.append("x_url", x);
       data.append("resume_md", resume);
       if (photo) data.append("photo", photo);
 
@@ -181,6 +189,33 @@ export default function SetupClient({ email }: { email: string }) {
             Used by ChatGPT, Perplexity, and Gemini — they don't reliably
             fetch your résumé link, but they can search LinkedIn. Without it,
             only the Claude button shows on your page.
+          </span>
+        </label>
+
+        <label className="field">
+          <span>Instagram URL <em>optional</em></span>
+          <input
+            className="input"
+            type="url"
+            maxLength={200}
+            placeholder="instagram.com/yourname"
+            value={instagram}
+            onChange={(e) => setInstagram(e.target.value)}
+          />
+        </label>
+
+        <label className="field">
+          <span>X URL <em>optional</em></span>
+          <input
+            className="input"
+            type="url"
+            maxLength={200}
+            placeholder="x.com/yourname"
+            value={x}
+            onChange={(e) => setX(e.target.value)}
+          />
+          <span className="field-hint">
+            Each social you provide shows up as a small icon on your page.
           </span>
         </label>
 
