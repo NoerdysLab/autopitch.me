@@ -3,8 +3,8 @@ import { generateHandle, generateResumeSlug } from "./handle";
 import { DEFAULT_THEME, type ThemeKey } from "./themes";
 
 // User store. Queries Neon when DATABASE_URL is set; falls back to an
-// in-memory sample so the /x4k9 demo keeps rendering before the database
-// is provisioned.
+// in-memory Phil Knight sample so the /x4k9 demo keeps rendering before
+// the database is provisioned.
 
 export type User = {
   id: string;
@@ -25,60 +25,64 @@ export type User = {
 
 const SAMPLE: User = {
   id: "sample",
-  email: "alex@stanford.edu",
+  email: "phil@stanford.edu",
   handle: "x4k9",
-  resume_slug: "samplea1b2c3",
-  name: "Alex Chen",
-  tagline: "CS @ Stanford · ML systems & founder energy",
+  resume_slug: "k7n2",
+  name: "Phil Knight",
+  tagline: "MBA @ Stanford GSB",
   photo_url: null,
-  linkedin_url: "https://www.linkedin.com/in/alex-chen-stanford",
+  linkedin_url: "https://www.linkedin.com/in/philknight-gsb",
   instagram_url: null,
   x_url: null,
   theme: "warm",
-  resume_md: `# Alex Chen
+  resume_md: `# Phil Knight
+*MBA Candidate, Stanford GSB · Portland, OR*
 
-CS @ Stanford (B.S. expected 2026). Interested in ML systems, fast inference,
-and small teams shipping ambitious products. Looking for summer roles, founding
-engineer conversations, or interesting research collaborations.
+GSB MBA, Class of 2026. Distance runner, accidental shoe importer.
+Looking to talk to running-store owners about Japanese athletic shoes —
+and to anyone who'd argue product or brand wins in footwear.
 
-**Reach me:** alex@stanford.edu
+**Reach me:** phil@stanford.edu
 
 ---
 
 ## Education
-- **Stanford University** — B.S. Computer Science, AI track (2022–2026, GPA 3.92)
-- Coursework: CS 224N (NLP), CS 229 (ML), CS 149 (Parallel Computing), CS 248 (Graphics)
+- **Stanford Graduate School of Business** — MBA Candidate (2024–2026)
+- **University of Oregon** — B.B.A. (2018–2022). Ran the mile (4:13 PR)
+  under coach Bill Bowerman.
 
 ## Experience
 
-### Anthropic — Inference Performance Intern (Summer 2025)
-- Cut p50 latency on a production model path by 18% by reorganizing the KV-cache
-  layout and rewriting two hot CUDA kernels.
-- Owned a benchmark harness used by ~30 engineers to evaluate quantization
-  variants before rollout.
+### Founder, Blue Ribbon Sports — 2024–present
+- Importing Onitsuka Tiger running shoes from Kobe, Japan.
+- Selling out of the trunk of a Plymouth Valiant at track meets across the
+  Pacific Northwest.
+- $8,000 in first-year sales; reordering monthly. Margins improving with volume.
+- Working name for the eventual rebrand: **"Nike."**
 
-### Stanford NLP Group — Research Assistant (2024–present, w/ Prof. Manning)
-- Co-author on a paper exploring tokenizer-free byte-level retrieval (under
-  review, EMNLP 2026).
-- Built the eval pipeline that runs nightly across 12 datasets.
+### United States Army Reserve — 2022–2023
+- Active duty followed by reserve service.
+- Reads as reliability under pressure on a résumé; reads as discipline to me.
 
-### Ramp — SWE Intern (Summer 2024)
-- Shipped the merchant-category enrichment service used by the categorization
-  ML model. ~$40M/mo of transactions flow through it.
+### Price Waterhouse — Audit Intern, Summer 2023
+- Learned to read a balance sheet. Learned I'd rather sell shoes.
 
-## Projects
-- **tinygrep** — single-binary, SIMD-accelerated grep replacement. 4k★ on
-  GitHub. Posted #1 on Hacker News in March 2025.
-- **paperboat** — Mac app that turns arXiv papers into spaced-repetition decks.
-  ~600 weekly active users.
+## What I'm working on
+- A second-year GSB paper arguing that Japanese athletic shoes can break the
+  German hold on the US running market.
+- Cold-emailing every track coach in the Pacific Northwest to get our shoes
+  on more athletes' feet.
 
-## Skills
-Python, Rust, TypeScript, CUDA, PyTorch, JAX, Postgres, distributed training.
+## What energizes me
+- Running splits.
+- Pricing puzzles.
+- People who'd rather build than analyze.
 
 ## Things I'm proud of
-- Ran the Stanford CS curriculum in 2.5 years instead of 4.
-- Cold-emailed 47 researchers in freshman year; the 12 who replied shaped
-  every subsequent project.
+- Sub-4:15 mile.
+- Got Bowerman to bring product feedback into the company before we'd even
+  named it.
+- Talked my way into Onitsuka's Kobe office on a one-week visa.
 `,
   created_at: new Date("2026-01-15").toISOString(),
   deleted_at: null,

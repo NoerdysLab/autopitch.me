@@ -168,7 +168,7 @@ export default function SetupClient({ email }: { email: string }) {
             className="input"
             required
             maxLength={80}
-            placeholder="Alex Chen"
+            placeholder="Phil Knight"
             value={name}
             onChange={(e) => setName(e.target.value)}
             autoFocus
