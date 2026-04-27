@@ -29,6 +29,12 @@ export default async function Home() {
           <h1>Your résumé, one click away from any AI.</h1>
         </section>
 
+        <section className="container cta-row cta-row-tight">
+          <Link href="/signup" className="cta">
+            Claim your page or sign in
+          </Link>
+        </section>
+
         <section className="container demo-section">
           <HomeDemo />
         </section>
@@ -48,7 +54,7 @@ export default async function Home() {
             <div className="step">
               <div className="step-num">3</div>
               <h3>Share it</h3>
-              <p>Recruiters, investors, friends — one click and AI does the talking.</p>
+              <p>Your recruiter&apos;s AI knows them best, and pitches you.</p>
             </div>
           </div>
         </section>
