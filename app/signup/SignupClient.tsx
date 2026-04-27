@@ -87,8 +87,8 @@ export default function SignupClient({
           <h1>Claim your page or sign in</h1>
           <p className="auth-sub">
             Enter your <strong>@stanford.edu</strong> email — we'll send a
-            6-digit code. New here? You'll get a fresh page. Returning? Same
-            email takes you back to yours.
+            6-digit code. New here? You'll get a fresh page. Returning? Your
+            email lets you sign in.
           </p>
           <input
             type="email"
