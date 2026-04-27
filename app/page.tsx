@@ -26,11 +26,6 @@ export default async function Home() {
       <main>
         <section className="container hero hero-tight">
           <h1>Your résumé, one click away from any AI.</h1>
-          <p className="lede">
-            Paste your résumé. Get a short link. Anyone you share it with
-            opens an AI that already knows who you are — and pitches you to
-            them.
-          </p>
         </section>
 
         <section className="container demo-section">

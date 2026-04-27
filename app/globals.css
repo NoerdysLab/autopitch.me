@@ -145,6 +145,7 @@ button {
 }
 
 .demo-section {
+  max-width: 1080px;
   padding: 8px 0 16px;
 }
 
