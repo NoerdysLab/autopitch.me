@@ -154,8 +154,10 @@ button {
   width: 100%;
   /* Storyboard layout: scenes are absolutely positioned and overlay
      each other, fading through the 20s loop. The wrap defines the
-     stage size — taller on phones, wider on desktop. */
-  min-height: clamp(440px, 64dvh, 600px);
+     stage size — taller on phones, wider on desktop. svh keeps the
+     box stable as iOS Safari shows/hides its URL bar during scroll
+     (dvh would visibly resize the demo). */
+  min-height: clamp(440px, 64svh, 600px);
   margin: 0 auto;
   border-radius: 24px;
   overflow: hidden;
