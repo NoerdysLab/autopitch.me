@@ -33,6 +33,17 @@ export default async function Home() {
           </p>
         </section>
 
+        <section className="container demo-section">
+          <div className="demo-wrap">
+            <iframe
+              className="demo-iframe"
+              src="/demo.html"
+              title="warmpitch.me walkthrough"
+              loading="lazy"
+            />
+          </div>
+        </section>
+
         <section className="container">
           <div className="steps steps-tight">
             <div className="step">
