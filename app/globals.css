@@ -610,6 +610,11 @@ button {
 
 /* Inline button rendered as an underlined link inside .field-hint copy.
    Used by CopyPromptButton — clicks copy a prompt to clipboard. */
+.hint-link-wrap {
+  position: relative;
+  display: inline-block;
+}
+
 .hint-link {
   background: none;
   border: 0;
@@ -626,6 +631,33 @@ button {
 .hint-link:hover {
   color: var(--text);
   text-decoration-color: var(--text);
+}
+
+/* Floating "copied" pill that pops above the link on click. Lives ~1.4s,
+   keys re-mount the element each click so the animation always restarts. */
+.copy-bubble {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text);
+  color: var(--surface);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  animation: copy-bubble 1.4s var(--spring) forwards;
+}
+
+@keyframes copy-bubble {
+  0%   { opacity: 0; transform: translate(-50%, 4px); }
+  15%  { opacity: 1; transform: translate(-50%, 0); }
+  80%  { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -4px); }
 }
 
 /* ─── theme swatch picker ─────────────────────────────────────────── */

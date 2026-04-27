@@ -322,7 +322,7 @@ export default function EditClient(props: Props) {
             This doesn't have to be just a résumé — anything that helps an AI
             pitch you (accomplishments, side projects, hobbies, what energizes
             you) fits here. Not sure where to start? <CopyPromptButton /> and
-            paste it into Claude or ChatGPT.
+            paste it into Claude, ChatGPT, or Gemini.
           </span>
         </label>
 
