@@ -1385,25 +1385,74 @@ button {
   will-change: opacity;
 }
 
-/* ─── scene timing ────────────────────────────────────────────────
-   20s loop split in half: setup runs 0–10s, AI window runs 10–20s.
-   The hero and pitch scenes were removed from the loop. */
+/* ─── scene timing (kept identical to original loop) ─────────────── */
 
+.dx-scene-hero {
+  animation: dx-hero 20s linear infinite;
+}
+@keyframes dx-hero {
+  0%, 15%       { opacity: 1; }
+  16.5%, 99.9%  { opacity: 0; }
+  100%          { opacity: 1; }
+}
 .dx-scene-setup {
   animation: dx-setup 20s linear infinite;
 }
 @keyframes dx-setup {
-  0%           { opacity: 0; }
-  3%, 47%      { opacity: 1; }
-  50%, 100%    { opacity: 0; }
+  0%, 15%      { opacity: 0; }
+  16.5%, 30%   { opacity: 1; }
+  31.5%, 100%  { opacity: 0; }
+}
+.dx-scene-pitch {
+  animation: dx-pitch 20s linear infinite;
+}
+@keyframes dx-pitch {
+  0%, 30%      { opacity: 0; }
+  31.5%, 40%   { opacity: 1; }
+  41.5%, 100%  { opacity: 0; }
 }
 .dx-scene-ai {
   animation: dx-aiwin 20s linear infinite;
 }
 @keyframes dx-aiwin {
-  0%, 50%      { opacity: 0; }
-  53%, 95%     { opacity: 1; }
-  100%         { opacity: 0; }
+  0%, 40%       { opacity: 0; }
+  42.5%, 88.5%  { opacity: 1; }
+  91.5%, 100%   { opacity: 0; }
+}
+
+/* ─── hero scene ─────────────────────────────────────────────────── */
+
+.dx-scene-hero {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.dx-hero-h1 {
+  margin: 0 0 clamp(18px, 3vw, 24px);
+  font-size: clamp(22px, 5.2vw, 44px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  max-width: 18ch;
+  animation: dx-fadeUpH1 20s linear infinite;
+  opacity: 0;
+}
+.dx-hero-logo {
+  display: block;
+  height: clamp(20px, 3.4vw, 26px);
+  width: auto;
+  animation: dx-fadeUpLede 20s linear infinite;
+  opacity: 0;
+}
+@keyframes dx-fadeUpH1 {
+  0%, 1.5%     { opacity: 0; transform: translateY(12px); }
+  5.25%, 15%   { opacity: 1; transform: translateY(0); }
+  16.5%, 100%  { opacity: 0; transform: translateY(-4px); }
+}
+@keyframes dx-fadeUpLede {
+  0%, 3.75%    { opacity: 0; transform: translateY(12px); }
+  7.5%, 15%    { opacity: 1; transform: translateY(0); }
+  16.5%, 100%  { opacity: 0; transform: translateY(-4px); }
 }
 
 /* ─── setup scene ────────────────────────────────────────────────── */
@@ -1500,9 +1549,9 @@ button {
 .dx-typed-name { animation: dx-typeName 20s linear infinite; width: 0; }
 .dx-typed-tag  { animation: dx-typeTag  20s linear infinite; width: 0; }
 .dx-typed-li   { animation: dx-typeLi   20s linear infinite; width: 0; }
-@keyframes dx-typeName { 0%, 7%  { width: 0 } 10%, 100% { width: 75% } }
-@keyframes dx-typeTag  { 0%, 12% { width: 0 } 15%, 100% { width: 75% } }
-@keyframes dx-typeLi   { 0%, 17% { width: 0 } 20%, 100% { width: 75% } }
+@keyframes dx-typeName { 0%, 18%    { width: 0 } 19.25%, 100% { width: 75% } }
+@keyframes dx-typeTag  { 0%, 19.75% { width: 0 } 21%,    100% { width: 75% } }
+@keyframes dx-typeLi   { 0%, 21.5%  { width: 0 } 22.75%, 100% { width: 75% } }
 
 .dx-resume-typed-wrap {
   position: relative;
@@ -1516,20 +1565,134 @@ button {
   animation: dx-resumePaste 20s steps(1, end) infinite;
 }
 @keyframes dx-resumePaste {
-  0%, 24.5%   { height: 0 }
-  25%, 100%   { height: 100% }
+  0%, 24.2%    { height: 0 }
+  24.25%, 100% { height: 100% }
 }
 @keyframes dx-pasteFlash {
-  0%, 24.5%   { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
-  25%         { box-shadow: 0 0 0 3px rgba(214, 112, 87, 0.18); }
-  26%, 100%   { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
+  0%, 24.2%   { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
+  24.25%      { box-shadow: 0 0 0 3px rgba(214, 112, 87, 0.18); }
+  25.5%, 100% { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
 }
 .dx-cta-pressed { animation: dx-ctaPress 20s linear infinite; }
 @keyframes dx-ctaPress {
-  0%, 35%     { transform: scale(1); box-shadow: 0 2px 6px var(--shadow); }
-  35.5%       { transform: scale(0.97); box-shadow: 0 1px 2px var(--shadow); }
-  36.5%       { transform: scale(1); box-shadow: 0 6px 18px var(--shadow-hover); }
+  0%, 28.45%  { transform: scale(1); box-shadow: 0 2px 6px var(--shadow); }
+  28.5%       { transform: scale(0.97); box-shadow: 0 1px 2px var(--shadow); }
+  29.25%      { transform: scale(1); box-shadow: 0 6px 18px var(--shadow-hover); }
   100%        { transform: scale(1); box-shadow: 0 2px 6px var(--shadow); }
+}
+
+/* ─── pitch scene ────────────────────────────────────────────────── */
+
+.dx-scene-pitch {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.dx-url-bar {
+  position: absolute;
+  top: clamp(54px, 9vw, 76px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-family: var(--mono);
+  font-size: clamp(10px, 1.8vw, 12px);
+  color: var(--text-dim);
+  box-shadow: 0 1px 2px var(--shadow);
+}
+.dx-url-bar .dx-strong { color: var(--text); font-weight: 500; }
+.dx-avatar {
+  width: clamp(64px, 11vw, 96px);
+  height: clamp(64px, 11vw, 96px);
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: -0.02em;
+  box-shadow: 0 1px 2px var(--shadow);
+  margin-bottom: clamp(14px, 2.5vw, 20px);
+}
+.dx-pitch-name {
+  margin: 0 0 4px;
+  font-size: clamp(20px, 3.6vw, 28px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.dx-tagline {
+  margin: 0 0 clamp(20px, 3.5vw, 28px);
+  color: var(--text-dim);
+  font-size: clamp(12px, 2.1vw, 14px);
+}
+.dx-ai-btn {
+  width: clamp(72px, 12vw, 92px);
+  height: clamp(72px, 12vw, 92px);
+  border-radius: clamp(20px, 3.2vw, 26px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px var(--btn-shadow-rest, var(--shadow));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  position: relative;
+}
+.dx-ai-btn .dx-mark {
+  width: clamp(22px, 3.8vw, 28px);
+  height: clamp(22px, 3.8vw, 28px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dx-ai-btn .dx-mark svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.dx-ai-btn .dx-label {
+  font-size: clamp(10px, 1.7vw, 12px);
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: -0.005em;
+}
+.dx-ai-btn-claude {
+  --btn-shadow-rest: rgba(214, 112, 87, 0.10);
+  --btn-shadow-hover: rgba(214, 112, 87, 0.30);
+  animation: dx-aiPulseClick 20s linear infinite;
+}
+@keyframes dx-aiPulseClick {
+  0%, 31.5%  { transform: translateY(0); box-shadow: 0 2px 8px var(--btn-shadow-rest); }
+  36.5%      { transform: translateY(-3px); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
+  37.5%      { transform: translateY(-3px); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
+  37.75%     { transform: scale(0.95); box-shadow: 0 1px 2px var(--btn-shadow-rest); }
+  38.75%     { transform: scale(1); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
+  40%, 100%  { transform: scale(1); box-shadow: 0 2px 8px var(--btn-shadow-rest); }
+}
+.dx-click-ripple {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  transform: translate(-50%, -50%) scale(0.9);
+  border: 2px solid var(--text);
+  opacity: 0;
+  pointer-events: none;
+  animation: dx-ripple 20s linear infinite;
+}
+@keyframes dx-ripple {
+  0%, 37.5%   { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  37.75%      { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+  39.25%      { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
+  100%        { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
 }
 
 /* ─── AI window scene ────────────────────────────────────────────── */
@@ -1552,9 +1715,10 @@ button {
   animation: dx-aiSlideIn 20s linear infinite;
 }
 @keyframes dx-aiSlideIn {
-  0%, 50%      { opacity: 0; transform: translateY(40px); }
-  53%, 95%     { opacity: 1; transform: translateY(0); }
-  100%         { opacity: 0; transform: translateY(0); }
+  0%, 40%       { opacity: 0; transform: translateY(40px); }
+  42.5%         { opacity: 1; transform: translateY(0); }
+  88.5%         { opacity: 1; transform: translateY(0); }
+  91.5%, 100%   { opacity: 0; transform: translateY(0); }
 }
 .dx-aiw-bar {
   height: clamp(32px, 5vw, 38px);
@@ -1604,9 +1768,9 @@ button {
   animation: dx-userMsgIn 20s linear infinite;
 }
 @keyframes dx-userMsgIn {
-  0%, 54.5%   { opacity: 0; transform: translateY(10px) scale(0.96); }
-  55%, 95%    { opacity: 1; transform: translateY(0) scale(1); }
-  100%        { opacity: 0; transform: translateY(0) scale(1); }
+  0%, 47.5%     { opacity: 0; transform: translateY(10px) scale(0.96); }
+  48%, 88.5%    { opacity: 1; transform: translateY(0) scale(1); }
+  91.5%, 100%   { opacity: 0; transform: translateY(0) scale(1); }
 }
 
 .dx-aiw-response {
@@ -1663,9 +1827,9 @@ button {
 .dx-thinking .dx-d:nth-child(3) { animation-delay: 0.4s; }
 @keyframes dx-thinkBlink { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
 @keyframes dx-thinkFade {
-  0%, 59.5%    { opacity: 0; }
-  60%, 65%     { opacity: 1; }
-  65.5%, 100%  { opacity: 0; }
+  0%, 48.75%   { opacity: 0; }
+  49%, 52.25%  { opacity: 1; }
+  52.5%, 100%  { opacity: 0; }
 }
 
 .dx-aiw-composer {
@@ -1697,14 +1861,14 @@ button {
   animation: dx-promptInstant 20s steps(1, end) infinite;
 }
 @keyframes dx-promptInstant {
-  0%, 52.95%  { opacity: 0; }
-  53%         { opacity: 1; }
-  55%, 100%   { opacity: 0; }
+  0%, 45.95%  { opacity: 0; }
+  46%         { opacity: 1; }
+  48%, 100%   { opacity: 0; }
 }
 @keyframes dx-composerFlash {
-  0%, 54.45%  { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
-  54.5%       { box-shadow: 0 0 0 3px rgba(214, 112, 87, 0.18); }
-  55.5%, 100% { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
+  0%, 45.95%  { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
+  46%         { box-shadow: 0 0 0 3px rgba(214, 112, 87, 0.18); }
+  47.25%, 100%{ box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
 }
 
 .dx-aiw-send {
@@ -1726,10 +1890,10 @@ button {
   display: block;
 }
 @keyframes dx-sendPress {
-  0%, 54.45%  { transform: scale(1); background: #bdbdc2; }
-  54.5%       { transform: scale(1); background: var(--text); }
-  54.95%      { transform: scale(1); background: var(--text); }
-  55%         { transform: scale(0.9); background: var(--text); }
-  55.5%, 100% { transform: scale(1); background: #bdbdc2; }
+  0%, 45.95%  { transform: scale(1); background: #bdbdc2; }
+  46%         { transform: scale(1); background: var(--text); }
+  47.45%      { transform: scale(1); background: var(--text); }
+  47.5%       { transform: scale(0.9); background: var(--text); }
+  48%, 100%   { transform: scale(1); background: #bdbdc2; }
 }
 
