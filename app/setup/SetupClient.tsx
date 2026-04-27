@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import CopyPromptButton from "@/components/CopyPromptButton";
 import ThemePicker from "@/components/ThemePicker";
 import { DEFAULT_THEME, type ThemeKey } from "@/lib/themes";
 
@@ -235,7 +236,7 @@ export default function SetupClient({ email }: { email: string }) {
         </div>
 
         <label className="field">
-          <span>Résumé (markdown)</span>
+          <span>Your background (markdown)</span>
           <textarea
             className="input textarea"
             required
@@ -245,9 +246,10 @@ export default function SetupClient({ email }: { email: string }) {
             onChange={(e) => setResume(e.target.value)}
           />
           <span className="field-hint">
-            New to markdown? Send your existing résumé (PDF, doc, anything)
-            to ChatGPT or Claude and ask: <em>"convert this to markdown."</em>
-            Paste the result here.
+            This doesn't have to be just a résumé — anything that helps an AI
+            pitch you (accomplishments, side projects, hobbies, what energizes
+            you) fits here. Not sure where to start? <CopyPromptButton /> and
+            paste it into Claude or ChatGPT.
           </span>
         </label>
 

@@ -608,6 +608,26 @@ button {
   line-height: 1.5;
 }
 
+/* Inline button rendered as an underlined link inside .field-hint copy.
+   Used by CopyPromptButton — clicks copy a prompt to clipboard. */
+.hint-link {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--border);
+  cursor: pointer;
+  transition: text-decoration-color 0.2s ease, color 0.2s ease;
+}
+
+.hint-link:hover {
+  color: var(--text);
+  text-decoration-color: var(--text);
+}
+
 /* ─── theme swatch picker ─────────────────────────────────────────── */
 
 .theme-picker {
