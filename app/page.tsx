@@ -1,4 +1,5 @@
 import Link from "next/link";
+import HomeDemo from "@/components/HomeDemo";
 import LoggedInHome from "./LoggedInHome";
 import { getSession } from "@/lib/session";
 import { getUserByEmail } from "@/lib/users";
@@ -29,14 +30,7 @@ export default async function Home() {
         </section>
 
         <section className="container demo-section">
-          <div className="demo-wrap">
-            <iframe
-              className="demo-iframe"
-              src="/demo.html"
-              title="warmpitch.me walkthrough"
-              loading="lazy"
-            />
-          </div>
+          <HomeDemo />
         </section>
 
         <section className="container">
