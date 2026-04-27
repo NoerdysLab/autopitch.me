@@ -19,12 +19,20 @@ function generateCode(): string {
 export async function startOtp(email: string): Promise<void> {
   const code = generateCode();
   const sql = getSql();
+  const normalized = email.toLowerCase();
+  // Invalidate any still-live codes for this email so a user who requested
+  // two codes in a row can't waste attempts typing the older one.
+  await sql`
+    UPDATE otp_codes
+    SET consumed_at = now()
+    WHERE lower(email) = ${normalized} AND consumed_at IS NULL
+  `;
   await sql`
     INSERT INTO otp_codes (email, code_hash, expires_at)
     VALUES (
-      ${email.toLowerCase()},
+      ${normalized},
       ${hashCode(code)},
-      now() + (${CODE_TTL_MINUTES} || ' minutes')::interval
+      now() + make_interval(mins => ${CODE_TTL_MINUTES})
     )
   `;
   await sendOtpEmail(email, code);

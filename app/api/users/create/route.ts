@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
-import { createUser, getUserByEmail } from "@/lib/users";
+import {
+  createUser,
+  EmailAlreadyExistsError,
+  getUserByEmail,
+} from "@/lib/users";
 
 const MAX_RESUME_BYTES = 64 * 1024;
 
@@ -47,13 +51,30 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "resume_too_large" }, { status: 400 });
   }
 
-  const user = await createUser({
-    email: session.email,
-    name,
-    tagline: tagline || null,
-    resume_md: resume,
-    photo_url: null,
-  });
+  let user;
+  try {
+    user = await createUser({
+      email: session.email,
+      name,
+      tagline: tagline || null,
+      resume_md: resume,
+      photo_url: null,
+    });
+  } catch (err) {
+    // Race against the precheck above: another request finished onboarding
+    // for the same email between the SELECT and the INSERT.
+    if (err instanceof EmailAlreadyExistsError) {
+      const winner = await getUserByEmail(session.email);
+      return NextResponse.json(
+        {
+          error: "already_onboarded",
+          redirect: winner ? `/${winner.handle}` : undefined,
+        },
+        { status: 409 },
+      );
+    }
+    throw err;
+  }
 
   return NextResponse.json({ ok: true, redirect: `/${user.handle}` });
 }

@@ -74,10 +74,16 @@ export default function SignupClient({
     }
   }
 
-  function startOver() {
-    setStage("email");
-    setCode("");
+  async function startOver() {
     setError(null);
+    setBusy(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } finally {
+      setStage("email");
+      setCode("");
+      setBusy(false);
+    }
   }
 
   return (
@@ -130,7 +136,12 @@ export default function SignupClient({
             {busy ? "Verifying…" : "Verify"}
           </button>
           {error && <p className="auth-error">{error}</p>}
-          <button type="button" className="auth-link" onClick={startOver}>
+          <button
+            type="button"
+            className="auth-link"
+            onClick={startOver}
+            disabled={busy}
+          >
             wrong email? start over
           </button>
         </form>

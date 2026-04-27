@@ -113,9 +113,17 @@ export type CreateUserInput = {
   photo_url: string | null;
 };
 
+export class EmailAlreadyExistsError extends Error {
+  constructor() {
+    super("email_already_exists");
+    this.name = "EmailAlreadyExistsError";
+  }
+}
+
 // Creates a user with a fresh handle, retrying on the (unlikely but possible)
-// collision until we find a free one. With ~1M handles and a small user base
-// this loop almost never iterates more than once.
+// collision until we find a free one. Email-uniqueness violations surface as
+// EmailAlreadyExistsError so the route can return a clean 409 even under a
+// race against the precheck.
 export async function createUser(input: CreateUserInput): Promise<User> {
   const sql = getSql();
 
@@ -137,10 +145,11 @@ export async function createUser(input: CreateUserInput): Promise<User> {
       `) as User[];
       return rows[0];
     } catch (err) {
-      // 23505 = unique_violation. If it's the handle index, retry with a new
-      // handle; otherwise (e.g. email already exists) bubble up.
       const msg = err instanceof Error ? err.message : String(err);
       if (msg.includes("users_handle_active_idx")) continue;
+      if (msg.includes("users_email_active_idx")) {
+        throw new EmailAlreadyExistsError();
+      }
       throw err;
     }
   }
