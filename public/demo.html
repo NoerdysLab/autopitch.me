@@ -645,5 +645,17 @@ Learned to read a balance sheet. Learned I'd rather sell shoes.</div></div>
 
 </div>
 </div>
+<script>
+  (function () {
+    var stage = document.querySelector('.stage');
+    if (!stage) return;
+    function fit() {
+      var s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+      stage.style.transform = 'scale(' + s + ')';
+    }
+    fit();
+    window.addEventListener('resize', fit);
+  })();
+</script>
 </body>
 </html>
