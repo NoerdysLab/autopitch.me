@@ -157,7 +157,7 @@ button {
      stage size — taller on phones, wider on desktop. svh keeps the
      box stable as iOS Safari shows/hides its URL bar during scroll
      (dvh would visibly resize the demo). */
-  min-height: clamp(440px, 64svh, 600px);
+  min-height: clamp(560px, 78svh, 680px);
   margin: 0 auto;
   border-radius: 24px;
   overflow: hidden;
