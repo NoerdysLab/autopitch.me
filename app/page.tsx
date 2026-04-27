@@ -55,7 +55,7 @@ export default async function Home() {
 
         <section className="container cta-row cta-row-tight">
           <Link href="/signup" className="cta">
-            Claim your page
+            Claim your page or sign in
           </Link>
           <span className="cta-sub">
             Stanford students, free. <Link href="/x4k9">see a sample →</Link>
