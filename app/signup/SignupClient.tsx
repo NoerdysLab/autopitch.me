@@ -84,10 +84,11 @@ export default function SignupClient({
     <div className="auth-card">
       {stage === "email" ? (
         <form onSubmit={submitEmail}>
-          <h1>Claim your page</h1>
+          <h1>Claim your page or sign in</h1>
           <p className="auth-sub">
             Enter your <strong>@stanford.edu</strong> email — we'll send a
-            6-digit code.
+            6-digit code. New here? You'll get a fresh page. Returning? Same
+            email takes you back to yours.
           </p>
           <input
             type="email"
