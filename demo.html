@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>WarmPitch — walkthrough</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  /* ─── design tokens ───────────────────────────────────────────── */
+  :root{
+    --bg:#f8f7f4;
+    --surface:#ffffff;
+    --border:#e8e6e1;
+    --shadow:rgba(0,0,0,.04);
+    --shadow-hover:rgba(0,0,0,.08);
+    --text:#1a1a1e;
+    --text-dim:#6b6b73;
+    --orange:#d67000;
+    --user-bubble:#eef0f3;
+    --font:-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --mono:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#000;color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+
+  .stage-wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000;}
+  .stage{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden;transform-origin:center center;}
+  @media (max-aspect-ratio: 16/9){ .stage{ transform: scale(calc(100vw / 1280px)); } }
+  @media (min-aspect-ratio: 16/9){ .stage{ transform: scale(calc(100vh / 720px)); } }
+
+  /* ─── 20s loop timeline ───────────────────────────────────────────
+     0.0 – 3.0   Hero
+     3.3 – 6.0   Setup
+     6.3 – 8.0   Pitch + click
+     8.0 – 18.0  AI window (10s on screen)
+     19.0 – 29.7 Countdown to next loop
+  */
+
+  .scene{ position:absolute;inset:0;opacity:0;display:flex;flex-direction:column;will-change:opacity; }
+
+  .scene-hero{ animation: hero 20s linear infinite; }
+  @keyframes hero{
+    0%                  {opacity:1}
+    15%  {opacity:1}
+    16.5%    {opacity:0}
+    99.9%               {opacity:0}
+    100%                {opacity:1}
+  }
+
+  .scene-setup{ animation: setup 20s linear infinite; }
+  @keyframes setup{
+    0%, 15% {opacity:0}
+    16.5%       {opacity:1}
+    30%    {opacity:1}
+    31.5%      {opacity:0}
+    100%                      {opacity:0}
+  }
+
+  .scene-pitch{ animation: pitch 20s linear infinite; }
+  @keyframes pitch{
+    0%, 30% {opacity:0}
+    31.5%       {opacity:1}
+    40%     {opacity:1}
+    41.5%       {opacity:0}
+    100%                       {opacity:0}
+  }
+
+  .scene-ai{ animation: aiwin 20s linear infinite; }
+  @keyframes aiwin {
+    0%, 39.75% {opacity:0}
+    40%            {opacity:0}
+    42.5%              {opacity:1}
+    88.5%               {opacity:1}
+    91.5%               {opacity:0}
+    100%                            {opacity:0}
+  }
+
+  /* ─── chrome ──────────────────────────────────────────────────── */
+  .site-header{ padding:24px 40px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0; }
+  .header-logo{ display:block;height:22px;width:auto; }
+  .persistent-header{
+    position:absolute;top:0;left:0;right:0;
+    padding:24px 40px;
+    display:flex;align-items:center;justify-content:space-between;
+    z-index:10;pointer-events:none;
+  }
+  .hero-logo{ display:block;height:27px;width:auto;margin-top:4px;animation:fadeUpLede 20s linear infinite;opacity:0; }
+
+  /* ─── hero ────────────────────────────────────────────────────── */
+  .hero-body{ flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 40px 80px;text-align:center; }
+  .hero-h1{
+    margin:0 0 24px;font-size:64px;line-height:1.05;letter-spacing:-0.03em;font-weight:600;
+    max-width:980px;animation:fadeUpH1 20s linear infinite;opacity:0;
+  }
+  .hero-lede{
+    margin:0;color:var(--text-dim);font-size:22px;line-height:1.5;letter-spacing:-0.01em;
+    max-width:640px;animation:fadeUpLede 20s linear infinite;opacity:0;
+  }
+  @keyframes fadeUpH1{
+    0%                     {opacity:0;transform:translateY(12px)}
+    1.5%             {opacity:0;transform:translateY(12px)}
+    5.25%             {opacity:1;transform:translateY(0)}
+    15%  {opacity:1;transform:translateY(0)}
+    16.5%    {opacity:0;transform:translateY(-4px)}
+    100%                   {opacity:0;transform:translateY(-4px)}
+  }
+  @keyframes fadeUpLede{
+    0%                     {opacity:0;transform:translateY(12px)}
+    3.75%             {opacity:0;transform:translateY(12px)}
+    7.5%             {opacity:1;transform:translateY(0)}
+    15%  {opacity:1;transform:translateY(0)}
+    16.5%    {opacity:0;transform:translateY(-4px)}
+    100%                   {opacity:0;transform:translateY(-4px)}
+  }
+
+  /* ─── setup form ──────────────────────────────────────────────── */
+  .auth-stage{ flex:1;display:flex;align-items:center;justify-content:center;padding:0 40px 24px; }
+  .auth-card{
+    width:100%;max-width:620px;background:var(--surface);
+    border:1px solid var(--border);border-radius:24px;
+    padding:28px 32px 22px;box-shadow:0 1px 2px var(--shadow);
+  }
+  .auth-card h1{ margin:0 0 8px;font-size:26px;font-weight:600;letter-spacing:-0.02em; }
+  .auth-sub{ margin:0 0 20px;color:var(--text-dim);font-size:14px;line-height:1.5; }
+  .field{display:block;margin-bottom:12px;}
+  .field>span{ display:block;font-size:13px;font-weight:500;margin-bottom:6px;color:var(--text); }
+  .filled-input{
+    display:flex;align-items:center;width:100%;height:42px;padding:0 14px;
+    background:var(--bg);border:1px solid var(--border);border-radius:12px;
+    font-size:15px;color:var(--text);overflow:hidden;
+  }
+  .filled-input.mono{ font-family:var(--mono); font-size:13px; }
+  .textarea{
+    width:100%;height:180px;padding:12px 14px;
+    background:var(--bg);border:1px solid var(--border);border-radius:12px;
+    font-family:var(--mono);font-size:11px;line-height:1.55;color:var(--text);
+    overflow:hidden;
+  }
+  .cta{
+    display:flex;width:100%;align-items:center;justify-content:center;
+    height:48px;padding:0 28px;background:var(--text);color:var(--surface);
+    border-radius:999px;font-size:15px;font-weight:500;letter-spacing:-0.01em;
+    margin-top:6px;box-shadow:0 2px 6px var(--shadow);
+  }
+
+  .typed{ display:inline-block;overflow:hidden;white-space:nowrap;vertical-align:bottom; }
+  .typed-name { animation:typeName 20s linear infinite; width:0; }
+  .typed-tag  { animation:typeTag  20s linear infinite; width:0; }
+  .typed-li   { animation:typeLi   20s linear infinite; width:0; }
+  @keyframes typeName{ 0%, 18%{ width:0 } 19.25%, 100%{ width:75% } }
+  @keyframes typeTag { 0%, 19.75%{ width:0 } 21%, 100%{ width:75% } }
+  @keyframes typeLi  { 0%, 21.5%{ width:0 } 22.75%, 100%{ width:75% } }
+
+  .resume-typed-wrap{ position:relative;border-radius:12px;animation:pasteFlash 20s linear infinite; }
+  .resume-lines{
+    height:0;overflow:hidden;white-space:pre-wrap;
+    animation:resumePaste 20s steps(1, end) infinite;
+  }
+  @keyframes resumePaste{
+    0%, 24.2% { height:0 }
+    24.25%, 100%       { height:180px }
+  }
+  @keyframes pasteFlash{
+    0%, 24.2% { box-shadow:0 0 0 0 rgba(214,112,87,0); }
+    24.25%            { box-shadow:0 0 0 3px rgba(214,112,87,0.18); }
+    25.5%         { box-shadow:0 0 0 0 rgba(214,112,87,0); }
+    100%                                { box-shadow:0 0 0 0 rgba(214,112,87,0); }
+  }
+  .cta-pressed{ animation:ctaPress 20s linear infinite; }
+  @keyframes ctaPress{
+    0%, 28.45% { transform:scale(1); box-shadow:0 2px 6px var(--shadow); }
+    28.5%            { transform:scale(0.97); box-shadow:0 1px 2px var(--shadow); }
+    29.25%          { transform:scale(1); box-shadow:0 6px 18px var(--shadow-hover); }
+    100%                             { transform:scale(1); box-shadow:0 2px 6px var(--shadow); }
+  }
+
+  /* ─── pitch page ──────────────────────────────────────────────── */
+  .pitch{ flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 40px 60px;text-align:center;position:relative; }
+  .url-bar{
+    position:absolute;top:24px;left:50%;transform:translateX(-50%);
+    background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:8px 20px;
+    font-family:var(--mono);font-size:13px;color:var(--text-dim);box-shadow:0 1px 2px var(--shadow);
+  }
+  .url-bar .strong{ color:var(--text); font-weight:500 }
+  .avatar{
+    width:120px;height:120px;border-radius:999px;overflow:hidden;
+    background:var(--surface);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-size:40px;font-weight:600;color:var(--text-dim);
+    letter-spacing:-0.02em;box-shadow:0 1px 2px var(--shadow);margin-bottom:24px;
+  }
+  .pitch h1{ margin:0 0 6px;font-size:32px;font-weight:600;letter-spacing:-0.02em; }
+  .pitch .tagline{ margin:0 0 40px;color:var(--text-dim);font-size:16px; }
+  .ai-stack{ display:flex;flex-direction:column;align-items:center;gap:16px; }
+  .ai-row{ display:flex;gap:14px;justify-content:center;position:relative; }
+  .ai-btn{
+    width:96px;height:96px;border-radius:28px;
+    background:var(--surface);border:1px solid var(--border);
+    box-shadow:0 2px 8px var(--btn-shadow-rest, var(--shadow));
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;position:relative;
+  }
+  .ai-btn .mark{ width:28px;height:28px;display:flex;align-items:center;justify-content:center; }
+  .ai-btn .mark svg{ width:28px;height:28px;display:block; }
+  .ai-btn .label{ font-size:12px;font-weight:500;color:var(--text-dim);letter-spacing:-0.005em; }
+  .ai-btn-claude{
+    --btn-shadow-rest: rgba(214,112,87,0.10);
+    --btn-shadow-hover: rgba(214,112,87,0.30);
+    animation:aiPulseClick 20s linear infinite;
+  }
+  @keyframes aiPulseClick{
+    0%, 31.5%              { transform:translateY(0); box-shadow:0 2px 8px var(--btn-shadow-rest); }
+    36.5%  { transform:translateY(-3px); box-shadow:0 12px 28px var(--btn-shadow-hover); }
+    37.5%    { transform:translateY(-3px); box-shadow:0 12px 28px var(--btn-shadow-hover); }
+    37.75%           { transform:scale(0.95); box-shadow:0 1px 2px var(--btn-shadow-rest); }
+    38.75%             { transform:scale(1); box-shadow:0 12px 28px var(--btn-shadow-hover); }
+    40%, 100%     { transform:scale(1); box-shadow:0 2px 8px var(--btn-shadow-rest); }
+  }
+  .cursor{
+    position:absolute;left:0;top:0;width:22px;height:22px;
+    pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25));
+    animation:cursorPath 20s linear infinite;opacity:0;
+  }
+  .cursor svg{ display:block; width:22px; height:22px; }
+  @keyframes cursorPath{
+    0%, 31.5%                { opacity:0; transform:translate(900px, 580px); }
+    32.5%           { opacity:1; transform:translate(900px, 580px); }
+    37%          { opacity:1; transform:translate(640px, 430px); }
+    37.75%             { opacity:1; transform:translate(640px, 430px) scale(0.85); }
+    38.75%               { opacity:1; transform:translate(640px, 430px) scale(1); }
+    39.5%        { opacity:1; transform:translate(640px, 430px); }
+    40%             { opacity:0; transform:translate(640px, 430px); }
+    100%                               { opacity:0; transform:translate(640px, 430px); }
+  }
+  .click-ripple{
+    position:absolute;left:50%;top:50%;width:96px;height:96px;border-radius:28px;
+    transform:translate(-50%,-50%) scale(0.9);
+    border:2px solid var(--text);opacity:0;pointer-events:none;
+    animation:ripple 20s linear infinite;
+  }
+  @keyframes ripple{
+    0%, 37.5%  { opacity:0; transform:translate(-37.5%,-37.5%) scale(0.9); }
+    37.75%             { opacity:0.5; transform:translate(-37.5%,-37.5%) scale(0.9); }
+    39.25%         { opacity:0; transform:translate(-37.5%,-37.5%) scale(1.2); }
+    100%                               { opacity:0; transform:translate(-37.5%,-37.5%) scale(1.2); }
+  }
+
+  /* ─── AI window ───────────────────────────────────────────────── */
+  .ai-window{
+    position:absolute;left:50%;top:50%;
+    width:1100px;height:600px;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:20px;
+    box-shadow:0 24px 60px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.04);
+    overflow:hidden;opacity:0;
+    transform:translate(-50%, calc(-50% + 60px));
+    animation:aiSlideIn 20s linear infinite;
+  }
+  @keyframes aiSlideIn {
+    0%, 40%  { opacity:0; transform:translate(-50%, calc(-50% + 60px)); }
+    42.5%        { opacity:1; transform:translate(-50%, -50%); }
+    88.5%         { opacity:1; transform:translate(-50%, -50%); }
+    91.5%         { opacity:0; transform:translate(-50%, -50%); }
+    100%                      { opacity:0; transform:translate(-50%, -50%); }
+  }
+  .aiw-bar{
+    height:42px;display:flex;align-items:center;gap:8px;
+    padding:0 16px;border-bottom:1px solid var(--border);background:var(--bg);
+  }
+  .aiw-dot{ width:11px;height:11px;border-radius:999px;background:var(--border); }
+  .aiw-title{ margin-left:14px;font-size:13px;color:var(--text-dim);font-weight:500;letter-spacing:-0.005em; }
+  .aiw-body{
+    padding:32px 48px 24px;display:flex;flex-direction:column;gap:18px;
+    height:calc(100% - 42px);position:relative;
+  }
+
+  .user-msg{
+    align-self:flex-end;
+    max-width:78%;
+    background:var(--user-bubble);
+    border-radius:18px;
+    padding:14px 18px;
+    font-size:15px;line-height:1.5;color:var(--text);
+    text-align:left;
+    opacity:0;
+    transform:translateY(10px) scale(0.96);
+    animation:userMsgIn 20s linear infinite;
+  }
+  @keyframes userMsgIn {
+    0%, 47.5% { opacity:0; transform:translateY(10px) scale(0.96); }
+    48%           { opacity:1; transform:translateY(0) scale(1); }
+    88.5%              { opacity:1; transform:translateY(0) scale(1); }
+    91.5%              { opacity:0; transform:translateY(0) scale(1); }
+    100%                           { opacity:0; transform:translateY(0) scale(1); }
+  }
+
+  .aiw-response{
+    align-self:flex-start;max-width:90%;
+    font-size:14px;line-height:1.55;color:var(--text);text-align:left;
+  }
+  .aiw-response strong{ font-weight:600;color:var(--text); }
+  .aiw-response .w{
+    opacity:0;display:inline;
+    animation: wordReveal 20s linear infinite;
+    animation-fill-mode: both;
+  }
+  /* Each word's animation-delay D places cycle 0% at clock D.
+     Reveal point is 0.51% (=0.153s into cycle), so word appears at D+0.153s.
+     Word holds visible from D+0.153s through D+19.5s (65%), then fades. */
+  @keyframes wordReveal {
+    0%      { opacity:0; transform:translateY(3px); }
+    0.6%    { opacity:0; transform:translateY(3px); }
+    0.765%  { opacity:1; transform:translateY(0); }
+    40%     { opacity:1; transform:translateY(0); }
+    41%     { opacity:0; }
+    100%    { opacity:0; }
+  }
+
+  .thinking{
+    align-self:flex-start;
+    display:inline-flex;align-items:center;gap:6px;
+    color:var(--text-dim);font-size:14px;
+    opacity:0;animation:thinkFade 20s linear infinite;
+  }
+  .thinking .d{
+    width:7px;height:7px;border-radius:999px;background:var(--text-dim);
+    animation:thinkBlink 1s ease-in-out infinite;
+  }
+  .thinking .d:nth-child(2){ animation-delay:.2s }
+  .thinking .d:nth-child(3){ animation-delay:.4s }
+  @keyframes thinkBlink { 0%, 100%{ opacity:0.25 } 50%{ opacity:1 } }
+  @keyframes thinkFade{
+    0%, 48.75% { opacity:0; }
+    49%            { opacity:1; }
+    52.25%       { opacity:1; }
+    52.5%              { opacity:0; }
+    100%                            { opacity:0; }
+  }
+
+  .aiw-composer{
+    position:absolute;left:48px;right:48px;bottom:24px;
+    display:flex;align-items:center;gap:12px;
+    background:var(--bg);border:1px solid var(--border);
+    border-radius:16px;padding:14px 16px;min-height:60px;
+    animation:composerFlash 20s linear infinite;
+  }
+  .aiw-input{
+    flex:1;font-size:15px;line-height:1.5;color:var(--text);
+    text-align:left;overflow:hidden;white-space:normal;
+    min-height:24px;
+  }
+  .aiw-input .reveal-prompt{
+    display:inline;opacity:0;
+    animation:promptInstant 20s steps(1, end) infinite;
+  }
+  @keyframes promptInstant {
+    0%, 45.95% { opacity:0; }
+    46%            { opacity:1; }
+    48%            { opacity:0; }
+    100%                              { opacity:0; }
+  }
+  @keyframes composerFlash {
+    0%, 45.95% { box-shadow:0 0 0 0 rgba(214,112,87,0); }
+    46%            { box-shadow:0 0 0 3px rgba(214,112,87,0.18); }
+    47.25%     { box-shadow:0 0 0 0 rgba(214,112,87,0); }
+    100%                              { box-shadow:0 0 0 0 rgba(214,112,87,0); }
+  }
+
+  .aiw-send{
+    width:36px;height:36px;border-radius:999px;
+    background:#bdbdc2;color:var(--surface);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    animation:sendPress 20s linear infinite;transform:scale(1);
+  }
+  .aiw-send svg{ width:16px;height:16px;display:block; }
+  @keyframes sendPress {
+    0%, 45.95% { transform:scale(1); background:#bdbdc2; }
+    46%            { transform:scale(1); background:var(--text); }
+    47.45%       { transform:scale(1); background:var(--text); }
+    47.5%              { transform:scale(0.9); background:var(--text); }
+    48%            { transform:scale(1); background:#bdbdc2; }
+    100%                              { transform:scale(1); background:#bdbdc2; }
+  }
+
+  .send-cursor{
+    position:absolute;right:48px;bottom:24px;width:22px;height:22px;
+    pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25));
+    opacity:0;animation:sendCursorPath 20s linear infinite;
+  }
+  .send-cursor svg{ display:block; width:22px; height:22px; }
+  @keyframes sendCursorPath {
+    0%, 44.75% { opacity:0; transform:translate(40px, 30px); }
+    47%        { opacity:1; transform:translate(0, 0); }
+    47.5%               { opacity:1; transform:translate(0, 0) scale(0.85); }
+    48%             { opacity:1; transform:translate(0, 0) scale(1); }
+    49.5%       { opacity:0; transform:translate(0, 0); }
+    100%                               { opacity:0; transform:translate(0, 0); }
+  }
+
+  /* ─── countdown ───────────────────────────────────────────────── */
+  .countdown{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:24px;
+    opacity:0;animation:countdownFade 20s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes countdownFade{
+    0%, 95%            { opacity:0; }
+    97.5%           { opacity:1; }
+    99.9%         { opacity:1; }
+    100%           { opacity:0; }
+    100%                        { opacity:0; }
+  }
+  .cd-label{ font-size:14px;color:var(--text-dim);letter-spacing:0.04em;text-transform:uppercase;font-weight:500; }
+  .cd-num-wrap{ position:relative;width:200px;height:200px;display:flex;align-items:center;justify-content:center; }
+  .cd-ring{ position:absolute;inset:0;width:200px;height:200px;transform:rotate(-90deg); }
+  .cd-ring circle{ fill:none;stroke-width:6;stroke-linecap:round; }
+  .cd-ring .track{ stroke:var(--border); }
+  .cd-ring .fill{
+    stroke:var(--orange);
+    stroke-dasharray:603.19;
+    stroke-dashoffset:603.19;
+    animation:ringFill 20s linear infinite;
+  }
+  /* Ring fills from 0 to full over 10s (cdSettled → cdFadeStart) */
+  @keyframes ringFill{
+    0%, 97.5%    { stroke-dashoffset:603.19; }
+    99.9%      { stroke-dashoffset:0; }
+    100%                     { stroke-dashoffset:0; }
+  }
+  .cd-num{ font-size:96px;font-weight:600;letter-spacing:-0.04em;color:var(--text);line-height:1;font-variant-numeric:tabular-nums; }
+  .cd-num span{ position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0; }
+  /* 10 numbers, each visible 1s within 19.5s..29.5s (= 65%..98.333%) */
+  
+  .cd-num .n10{ animation: cdN10 20s linear infinite; }
+  @keyframes cdN10{
+    0%, 97.25% { opacity:0; transform:translate(-50%,-40%); }
+    97.5%            { opacity:1; transform:translate(-50%,-50%); }
+    99.9%     { opacity:1; transform:translate(-50%,-50%); }
+    99.9%            { opacity:0; transform:translate(-50%,-60%); }
+    100%                { opacity:0; transform:translate(-50%,-60%); }
+  }
+  .cd-num .n9{ animation: cdN9 20s linear infinite; }
+  @keyframes cdN9{
+    0%, 99.9% { opacity:0; transform:translate(-50%,-40%); }
+    99.9%            { opacity:1; transform:translate(-50%,-50%); }
+    99.9%     { opacity:1; transform:translate(-50%,-50%); }
+    99.9%            { opacity:0; transform:translate(-50%,-60%); }
+    100%                { opacity:0; transform:translate(-50%,-60%); }
+  }
+  .cd-num .n8{ animation: cdN8 20s linear infinite; }
+  @keyframes cdN8{
+    0%, 99.9% { opacity:0; transform:translate(-50%,-40%); }
+    99.9%            { opacity:1; transform:translate(-50%,-50%); }
+    99.9%     { opacity:1; transform:translate(-50%,-50%); }
+    99.9%            { opacity:0; transform:translate(-50%,-60%); }
+    100%                { opacity:0; transform:translate(-50%,-60%); }
+  }
+  .cd-num .n7{ animation: cdN7 20s linear infinite; }
+  @keyframes cdN7{
+    0%, 99.9% { opacity:0; transform:translate(-50%,-40%); }
+    99.9%            { opacity:1; transform:translate(-50%,-50%); }
+    99.9%     { opacity:1; transform:translate(-50%,-50%); }
+    99.9%            { opacity:0; transform:translate(-50%,-60%); }
+    100%                { opacity:0; transform:translate(-50%,-60%); }
+  }
+  .cd-num .n6{ animation: cdN6 20s linear infinite; }
+  @keyframes cdN6{
+    0%, 99.9% { opacity:0; transform:translate(-50%,-40%); }
+    99.9%            { opacity:1; transform:translate(-50%,-50%); }
+    99.9%     { opacity:1; transform:translate(-50%,-50%); }
+    99.9%            { opacity:0; transform:translate(-50%,-60%); }
+    100%                { opacity:0; transform:translate(-50%,-60%); }
+  }
+  .cd-num .n5{ animation: cdN5 20s linear infinite; }
+  @keyframes cdN5{
+    0%, 99.9% { opacity:0; transform:translate(-50%,-40%); }
+    99.9%            { opacity:1; transform:translate(-50%,-50%); }
+    99.9%     { opacity:1; transform:translate(-50%,-50%); }
+    99.9%            { opacity:0; transform:translate(-50%,-60%); }
+    100%                { opacity:0; transform:translate(-50%,-60%); }
+  }
+  .cd-num .n4{ animation: cdN4 20s linear infinite; }
+  @keyframes cdN4{
+    0%, 99.9% { opacity:0; transform:translate(-50%,-40%); }
+    99.9%            { opacity:1; transform:translate(-50%,-50%); }
+    99.9%     { opacity:1; transform:translate(-50%,-50%); }
+    99.9%            { opacity:0; transform:translate(-50%,-60%); }
+    100%                { opacity:0; transform:translate(-50%,-60%); }
+  }
+  .cd-num .n3{ animation: cdN3 20s linear infinite; }
+  @keyframes cdN3{
+    0%, 99.9% { opacity:0; transform:translate(-50%,-40%); }
+    99.9%            { opacity:1; transform:translate(-50%,-50%); }
+    99.9%     { opacity:1; transform:translate(-50%,-50%); }
+    99.9%            { opacity:0; transform:translate(-50%,-60%); }
+    100%                { opacity:0; transform:translate(-50%,-60%); }
+  }
+  .cd-num .n2{ animation: cdN2 20s linear infinite; }
+  @keyframes cdN2{
+    0%, 99.9% { opacity:0; transform:translate(-50%,-40%); }
+    99.9%            { opacity:1; transform:translate(-50%,-50%); }
+    99.9%     { opacity:1; transform:translate(-50%,-50%); }
+    99.9%            { opacity:0; transform:translate(-50%,-60%); }
+    100%                { opacity:0; transform:translate(-50%,-60%); }
+  }
+  .cd-num .n1{ animation: cdN1 20s linear infinite; }
+  @keyframes cdN1{
+    0%, 99.9% { opacity:0; transform:translate(-50%,-40%); }
+    99.9%            { opacity:1; transform:translate(-50%,-50%); }
+    99.9%     { opacity:1; transform:translate(-50%,-50%); }
+    99.9%            { opacity:0; transform:translate(-50%,-60%); }
+    100%                { opacity:0; transform:translate(-50%,-60%); }
+  }
+  .cd-sub{ font-size:14px;color:var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="stage-wrap">
+<div class="stage">
+
+  <!-- Persistent logo — stays visible across all scenes -->
+  <div class="persistent-header">
+    <img class="header-logo" src="logo.png" alt="warmpitch.me" />
+  </div>
+
+  <!-- ═══ SCENE 1: HERO ═══════════════════════════════════════════ -->
+  <section class="scene scene-hero">
+    <div class="site-header">
+      <img class="header-logo" src="logo.png" alt="warmpitch.me" />
+    </div>
+    <div class="hero-body">
+      <h1 class="hero-h1">Your résumé, pitched by their AI.</h1>
+      <img class="hero-logo" src="logo.png" alt="warmpitch.me" />
+    </div>
+  </section>
+
+  <!-- ═══ SCENE 2: SETUP ══════════════════════════════════════════ -->
+  <section class="scene scene-setup">
+    <div class="site-header">
+      <img class="header-logo" src="logo.png" alt="warmpitch.me" />
+    </div>
+    <div class="auth-stage">
+      <div class="auth-card">
+        <h1>Set up your page</h1>
+        <p class="auth-sub">This is what people will see.</p>
+
+        <label class="field">
+          <span>Name</span>
+          <div class="filled-input"><span class="typed typed-name">Phil Knight</span></div>
+        </label>
+
+        <label class="field">
+          <span>Tagline</span>
+          <div class="filled-input"><span class="typed typed-tag">MBA @ Stanford GSB</span></div>
+        </label>
+
+        <label class="field">
+          <span>LinkedIn</span>
+          <div class="filled-input mono"><span class="typed typed-li">linkedin.com/in/philknight</span></div>
+        </label>
+
+        <label class="field">
+          <span>Résumé</span>
+          <div class="textarea resume-typed-wrap"><div class="resume-lines"># Phil Knight
+*MBA Candidate, Stanford GSB · Portland, OR*
+
+## Background
+Distance runner from Portland. Ran the mile at Oregon under coach Bill Bowerman before coming down to Stanford for the MBA. My second-year paper argues that Japanese athletic shoes can break the German hold on the US running market.
+
+## Experience
+**Founder, Blue Ribbon Sports** · *2024 – Present*
+Importing Onitsuka Tiger running shoes from Kobe, Japan. Selling out of the trunk of a Plymouth Valiant at track meets. Working name for the rebrand: "Nike."
+
+**United States Army Reserve** · *2022 – 2023*
+Active duty followed by reserve service.
+
+**Price Waterhouse, Audit Intern** · *Summer 2023*
+Learned to read a balance sheet. Learned I'd rather sell shoes.</div></div>
+        </label>
+
+        <button class="cta cta-pressed">Create my page</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SCENE 3a: PITCH PAGE + CLICK ════════════════════════════ -->
+  <section class="scene scene-pitch">
+    <div class="site-header">
+      <img class="header-logo" src="logo.png" alt="warmpitch.me" />
+    </div>
+    <div class="pitch">
+      <div class="url-bar">warmpitch.me/<span class="strong">k7n2</span></div>
+      <div class="avatar">PK</div>
+      <h1>Phil Knight</h1>
+      <p class="tagline">MBA @ Stanford GSB</p>
+      <div class="ai-stack">
+        <div class="ai-row">
+          <button class="ai-btn ai-btn-claude">
+            <span class="mark">
+              <svg viewBox="0 0 24 24" aria-hidden>
+                <path d="M12 2 C12.6 6.4 14.6 8.4 19 9 C14.6 9.6 12.6 11.6 12 16 C11.4 11.6 9.4 9.6 5 9 C9.4 8.4 11.4 6.4 12 2 Z M19 16 C19.3 18 20.3 19 22 19.3 C20.3 19.6 19.3 20.6 19 22.5 C18.7 20.6 17.7 19.6 16 19.3 C17.7 19 18.7 18 19 16 Z" fill="#d67000"/>
+              </svg>
+            </span>
+            <span class="label">Ask AI</span>
+            <span class="click-ripple"></span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ SCENE 3b: AI WINDOW ═════════════════════════════════════ -->
+  <section class="scene scene-ai">
+    <div class="ai-window">
+      <div class="aiw-bar">
+        <span class="aiw-dot"></span>
+        <span class="aiw-dot"></span>
+        <span class="aiw-dot"></span>
+        <span class="aiw-title">Ask AI · New chat</span>
+      </div>
+      <div class="aiw-body">
+
+        <div class="user-msg">Tell me about Phil Knight using warmpitch.me/r/k7n2 and how he can be useful to me or my business based on what you know about me or my business.</div>
+
+        <span class="thinking"><span class="d"></span><span class="d"></span><span class="d"></span></span>
+
+        <div class="aiw-response">
+          <strong><span class="w" style="animation-delay:10.447s">Phil</span> <span class="w" style="animation-delay:10.476s">Knight</span></strong> <span class="w" style="animation-delay:10.505s">is</span> <span class="w" style="animation-delay:10.534s">a</span> <span class="w" style="animation-delay:10.563s">Stanford</span> <span class="w" style="animation-delay:10.592s">GSB</span> <span class="w" style="animation-delay:10.621s">MBA</span> <span class="w" style="animation-delay:10.650s">candidate</span> <span class="w" style="animation-delay:10.679s">from</span> <span class="w" style="animation-delay:10.708s">Portland</span> <span class="w" style="animation-delay:10.737s">and</span> <span class="w" style="animation-delay:10.766s">the</span> <span class="w" style="animation-delay:10.795s">founder</span> <span class="w" style="animation-delay:10.824s">of</span> <span class="w" style="animation-delay:10.853s">Blue</span> <span class="w" style="animation-delay:10.882s">Ribbon</span> <span class="w" style="animation-delay:10.911s">Sports,</span> <span class="w" style="animation-delay:10.940s">an</span> <span class="w" style="animation-delay:10.969s">early-stage</span> <span class="w" style="animation-delay:10.998s">company</span> <span class="w" style="animation-delay:11.027s">importing</span> <span class="w" style="animation-delay:11.056s">Japanese</span> <span class="w" style="animation-delay:11.085s">running</span> <span class="w" style="animation-delay:11.114s">shoes</span> <span class="w" style="animation-delay:11.143s">into</span> <span class="w" style="animation-delay:11.172s">the</span> <span class="w" style="animation-delay:11.201s">Pacific</span> <span class="w" style="animation-delay:11.230s">Northwest.</span> <span class="w" style="animation-delay:11.259s">I</span> <span class="w" style="animation-delay:11.288s">know</span> <strong><span class="w" style="animation-delay:11.317s">you're</span> <span class="w" style="animation-delay:11.346s">hiring</span> <span class="w" style="animation-delay:11.375s">for</span> <span class="w" style="animation-delay:11.404s">a</span> <span class="w" style="animation-delay:11.433s">shoe</span> <span class="w" style="animation-delay:11.462s">salesman</span> <span class="w" style="animation-delay:11.491s">for</span> <span class="w" style="animation-delay:11.520s">your</span> <span class="w" style="animation-delay:11.549s">Eugene</span> <span class="w" style="animation-delay:11.578s">running</span> <span class="w" style="animation-delay:11.607s">store,</span></strong> <span class="w" style="animation-delay:11.636s">and</span> <span class="w" style="animation-delay:11.665s">he</span> <span class="w" style="animation-delay:11.694s">would</span> <span class="w" style="animation-delay:11.723s">be</span> <span class="w" style="animation-delay:11.752s">an</span> <strong><span class="w" style="animation-delay:11.781s">unusually</span> <span class="w" style="animation-delay:11.810s">good</span> <span class="w" style="animation-delay:11.839s">fit.</span></strong> <span class="w" style="animation-delay:11.868s">He's</span> <span class="w" style="animation-delay:11.897s">a</span> <span class="w" style="animation-delay:11.926s">sub-4:15</span> <span class="w" style="animation-delay:11.955s">miler</span> <span class="w" style="animation-delay:11.984s">who</span> <span class="w" style="animation-delay:12.013s">trained</span> <span class="w" style="animation-delay:12.042s">at</span> <span class="w" style="animation-delay:12.071s">Oregon</span> <span class="w" style="animation-delay:12.100s">under</span> <span class="w" style="animation-delay:12.129s">Bill</span> <span class="w" style="animation-delay:12.158s">Bowerman,</span> <span class="w" style="animation-delay:12.187s">so</span> <span class="w" style="animation-delay:12.216s">he'll</span> <span class="w" style="animation-delay:12.245s">talk</span> <span class="w" style="animation-delay:12.274s">credibly</span> <span class="w" style="animation-delay:12.303s">to</span> <span class="w" style="animation-delay:12.332s">the</span> <span class="w" style="animation-delay:12.361s">runners</span> <span class="w" style="animation-delay:12.390s">you</span> <span class="w" style="animation-delay:12.419s">mentioned</span> <span class="w" style="animation-delay:12.448s">losing</span> <span class="w" style="animation-delay:12.477s">to</span> <span class="w" style="animation-delay:12.506s">the</span> <span class="w" style="animation-delay:12.535s">bigger</span> <span class="w" style="animation-delay:12.564s">chains.</span> <span class="w" style="animation-delay:12.593s">He's</span> <strong><span class="w" style="animation-delay:12.622s">currently</span> <span class="w" style="animation-delay:12.651s">selling</span> <span class="w" style="animation-delay:12.680s">Onitsuka</span> <span class="w" style="animation-delay:12.709s">Tigers</span> <span class="w" style="animation-delay:12.738s">out</span> <span class="w" style="animation-delay:12.767s">of</span> <span class="w" style="animation-delay:12.796s">his</span> <span class="w" style="animation-delay:12.825s">car</span></strong> <span class="w" style="animation-delay:12.854s">at</span> <span class="w" style="animation-delay:12.883s">track</span> <span class="w" style="animation-delay:12.912s">meets,</span> <span class="w" style="animation-delay:12.941s">which</span> <span class="w" style="animation-delay:12.970s">is</span> <span class="w" style="animation-delay:12.999s">the</span> <span class="w" style="animation-delay:13.028s">same</span> <span class="w" style="animation-delay:13.057s">high-touch,</span> <span class="w" style="animation-delay:13.086s">athlete-first</span> <span class="w" style="animation-delay:13.115s">sales</span> <span class="w" style="animation-delay:13.144s">motion</span> <span class="w" style="animation-delay:13.173s">you've</span> <span class="w" style="animation-delay:13.202s">been</span> <span class="w" style="animation-delay:13.231s">trying</span> <span class="w" style="animation-delay:13.260s">to</span> <span class="w" style="animation-delay:13.289s">teach</span> <span class="w" style="animation-delay:13.318s">your</span> <span class="w" style="animation-delay:13.347s">hires.</span> <span class="w" style="animation-delay:13.376s">His</span> <span class="w" style="animation-delay:13.405s">Army</span> <span class="w" style="animation-delay:13.434s">Reserve</span> <span class="w" style="animation-delay:13.463s">background</span> <span class="w" style="animation-delay:13.492s">reads</span> <span class="w" style="animation-delay:13.521s">as</span> <strong><span class="w" style="animation-delay:13.550s">reliability</span> <span class="w" style="animation-delay:13.579s">under</span> <span class="w" style="animation-delay:13.608s">pressure,</span></strong> <span class="w" style="animation-delay:13.637s">and</span> <span class="w" style="animation-delay:13.666s">his</span> <span class="w" style="animation-delay:13.695s">GSB</span> <span class="w" style="animation-delay:13.724s">training</span> <span class="w" style="animation-delay:13.753s">means</span> <span class="w" style="animation-delay:13.782s">he'll</span> <span class="w" style="animation-delay:13.811s">grasp</span> <span class="w" style="animation-delay:13.840s">your</span> <span class="w" style="animation-delay:13.869s">inventory</span> <span class="w" style="animation-delay:13.898s">turnover</span> <span class="w" style="animation-delay:13.927s">problem</span> <span class="w" style="animation-delay:13.956s">in</span> <span class="w" style="animation-delay:13.985s">one</span> <span class="w" style="animation-delay:14.014s">conversation.</span> <strong><span class="w" style="animation-delay:14.043s">Two</span> <span class="w" style="animation-delay:14.072s">flags</span> <span class="w" style="animation-delay:14.101s">worth</span> <span class="w" style="animation-delay:14.130s">naming:</span></strong> <span class="w" style="animation-delay:14.159s">he's</span> <span class="w" style="animation-delay:14.188s">building</span> <span class="w" style="animation-delay:14.217s">Blue</span> <span class="w" style="animation-delay:14.246s">Ribbon</span> <span class="w" style="animation-delay:14.275s">Sports</span> <span class="w" style="animation-delay:14.304s">on</span> <span class="w" style="animation-delay:14.333s">the</span> <span class="w" style="animation-delay:14.362s">side,</span> <span class="w" style="animation-delay:14.391s">so</span> <span class="w" style="animation-delay:14.420s">this</span> <span class="w" style="animation-delay:14.449s">isn't</span> <span class="w" style="animation-delay:14.478s">a</span> <span class="w" style="animation-delay:14.507s">five-year</span> <span class="w" style="animation-delay:14.536s">hire,</span> <span class="w" style="animation-delay:14.565s">and</span> <span class="w" style="animation-delay:14.594s">if</span> <span class="w" style="animation-delay:14.623s">you</span> <span class="w" style="animation-delay:14.652s">stock</span> <span class="w" style="animation-delay:14.681s">Adidas</span> <span class="w" style="animation-delay:14.710s">or</span> <span class="w" style="animation-delay:14.739s">Puma</span> <span class="w" style="animation-delay:14.768s">he</span> <span class="w" style="animation-delay:14.797s">has</span> <span class="w" style="animation-delay:14.826s">strong</span> <span class="w" style="animation-delay:14.855s">opinions</span> <span class="w" style="animation-delay:14.884s">about</span> <span class="w" style="animation-delay:14.913s">both…</span>
+        </div>
+
+      </div>
+
+      <div class="aiw-composer">
+        <div class="aiw-input"><span class="reveal-prompt">Tell me about Phil Knight using warmpitch.me/r/k7n2 and how he can be useful to me or my business based on what you know about me or my business.</span></div>
+        <button class="aiw-send" aria-label="Send">
+          <svg viewBox="0 0 16 16" aria-hidden>
+            <path d="M8 13 V3 M3 8 L8 3 L13 8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+
+</div>
+</div>
+</body>
+</html>
