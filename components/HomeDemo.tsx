@@ -224,6 +224,9 @@ export default function HomeDemo() {
             <span className="dx-aiw-dot"></span>
             <span className="dx-aiw-dot"></span>
             <span className="dx-aiw-title">Ask AI · New chat</span>
+            <span className="dx-aiw-context">
+              Recruiter&apos;s / Investor&apos;s computer
+            </span>
           </div>
           <div className="dx-aiw-body">
             <div className="dx-user-msg">{PROMPT_TEXT}</div>

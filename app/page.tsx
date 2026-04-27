@@ -26,7 +26,7 @@ export default async function Home() {
 
       <main>
         <section className="container hero hero-tight">
-          <h1>Your résumé, one click away from any AI.</h1>
+          <h1>Your résumé, personally pitched by their AI</h1>
         </section>
 
         <section className="container cta-row cta-row-tight">

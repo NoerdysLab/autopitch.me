@@ -1743,6 +1743,19 @@ button {
   font-weight: 500;
   letter-spacing: -0.005em;
 }
+/* Contextual label that signals "this is the recipient's screen" — sits
+   on the right side of the chrome bar like a window-status annotation. */
+.dx-aiw-context {
+  margin-left: auto;
+  font-size: clamp(9px, 1.4vw, 11px);
+  color: var(--text-dim);
+  font-style: italic;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
 .dx-aiw-body {
   flex: 1;
   padding: clamp(14px, 2.5vw, 22px) clamp(14px, 3vw, 28px) clamp(14px, 2.5vw, 18px);
