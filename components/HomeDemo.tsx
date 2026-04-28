@@ -17,128 +17,129 @@ Active duty followed by reserve service.`;
 
 type Word = { w: string; d: number; b: boolean };
 
-// Stream timing: starts 10.447s into the 20s loop, ~29ms per word.
-// 115 words across two paragraphs. Last word lands at 13.753s, well
-// within the AI scene's display window.
+// Stream timing: starts 13.400s into the 20s loop, ~29ms per word.
+// 115 words across two paragraphs. Last word lands at 16.706s, leaving
+// ~2.3s of dwell on the closing recommendation before the AI scene
+// fades out at 19s.
 const RESPONSE: Word[][] = [
   [
-    { w: "Phil", d: 10.447, b: true },
-    { w: "Knight", d: 10.476, b: true },
-    { w: "is", d: 10.505, b: false },
-    { w: "a", d: 10.534, b: false },
-    { w: "Stanford", d: 10.563, b: false },
-    { w: "MBA", d: 10.592, b: false },
-    { w: "candidate", d: 10.621, b: false },
-    { w: "from", d: 10.650, b: false },
-    { w: "Portland.", d: 10.679, b: false },
-    { w: "As", d: 10.708, b: false },
-    { w: "you're", d: 10.737, b: true },
-    { w: "hiring", d: 10.766, b: true },
-    { w: "for", d: 10.795, b: true },
-    { w: "a", d: 10.824, b: true },
-    { w: "shoe", d: 10.853, b: true },
-    { w: "salesman", d: 10.882, b: true },
-    { w: "for", d: 10.911, b: true },
-    { w: "your", d: 10.940, b: true },
-    { w: "Eugene", d: 10.969, b: true },
-    { w: "running", d: 10.998, b: true },
-    { w: "store,", d: 11.027, b: true },
-    { w: "he", d: 11.056, b: false },
-    { w: "would", d: 11.085, b: false },
-    { w: "be", d: 11.114, b: false },
-    { w: "an", d: 11.143, b: false },
-    { w: "unusually", d: 11.172, b: true },
-    { w: "good", d: 11.201, b: true },
-    { w: "fit.", d: 11.230, b: true },
-    { w: "He's", d: 11.259, b: false },
-    { w: "a", d: 11.288, b: false },
-    { w: "sub-4:15", d: 11.317, b: false },
-    { w: "miler", d: 11.346, b: false },
-    { w: "so", d: 11.375, b: false },
-    { w: "he'll", d: 11.404, b: false },
-    { w: "talk", d: 11.433, b: false },
-    { w: "credibly", d: 11.462, b: false },
-    { w: "to", d: 11.491, b: false },
-    { w: "the", d: 11.520, b: false },
-    { w: "runners", d: 11.549, b: false },
-    { w: "you", d: 11.578, b: false },
-    { w: "mentioned", d: 11.607, b: false },
-    { w: "losing", d: 11.636, b: false },
-    { w: "to", d: 11.665, b: false },
-    { w: "the", d: 11.694, b: false },
-    { w: "bigger", d: 11.723, b: false },
-    { w: "stores.", d: 11.752, b: false },
-    { w: "He's", d: 11.781, b: false },
-    { w: "currently", d: 11.810, b: true },
-    { w: "selling", d: 11.839, b: true },
-    { w: "Onitsuka", d: 11.868, b: true },
-    { w: "Tigers", d: 11.897, b: true },
-    { w: "out", d: 11.926, b: true },
-    { w: "of", d: 11.955, b: true },
-    { w: "his", d: 11.984, b: true },
-    { w: "car", d: 12.013, b: true },
-    { w: "at", d: 12.042, b: false },
-    { w: "track", d: 12.071, b: false },
-    { w: "meets.", d: 12.100, b: false },
-    { w: "His", d: 12.129, b: false },
-    { w: "Army", d: 12.158, b: false },
-    { w: "background", d: 12.187, b: false },
-    { w: "reads", d: 12.216, b: false },
-    { w: "as", d: 12.245, b: false },
-    { w: "reliability", d: 12.274, b: true },
-    { w: "under", d: 12.303, b: true },
-    { w: "pressure,", d: 12.332, b: true },
-    { w: "and", d: 12.361, b: false },
-    { w: "his", d: 12.390, b: false },
-    { w: "GSB", d: 12.419, b: false },
-    { w: "training", d: 12.448, b: false },
-    { w: "means", d: 12.477, b: false },
-    { w: "he'll", d: 12.506, b: false },
-    { w: "grasp", d: 12.535, b: false },
-    { w: "your", d: 12.564, b: false },
-    { w: "inventory", d: 12.593, b: false },
-    { w: "problem", d: 12.622, b: false },
-    { w: "in", d: 12.651, b: false },
-    { w: "one", d: 12.680, b: false },
-    { w: "conversation.", d: 12.709, b: false },
-    { w: "Two", d: 12.738, b: true },
-    { w: "flags", d: 12.767, b: true },
-    { w: "worth", d: 12.796, b: true },
-    { w: "naming:", d: 12.825, b: true },
-    { w: "he's", d: 12.854, b: false },
-    { w: "building", d: 12.883, b: false },
-    { w: "Blue", d: 12.912, b: false },
-    { w: "Ribbon", d: 12.941, b: false },
-    { w: "Sports", d: 12.970, b: false },
-    { w: "on", d: 12.999, b: false },
-    { w: "the", d: 13.028, b: false },
-    { w: "side,", d: 13.057, b: false },
-    { w: "and", d: 13.086, b: false },
-    { w: "if", d: 13.115, b: false },
-    { w: "you", d: 13.144, b: false },
-    { w: "stock", d: 13.173, b: false },
-    { w: "Adidas", d: 13.202, b: false },
-    { w: "or", d: 13.231, b: false },
-    { w: "Puma", d: 13.260, b: false },
-    { w: "he", d: 13.289, b: false },
-    { w: "has", d: 13.318, b: false },
-    { w: "strong", d: 13.347, b: false },
-    { w: "opinions", d: 13.376, b: false },
-    { w: "about", d: 13.405, b: false },
-    { w: "both…", d: 13.434, b: false },
+    { w: "Phil", d: 13.400, b: true },
+    { w: "Knight", d: 13.429, b: true },
+    { w: "is", d: 13.458, b: false },
+    { w: "a", d: 13.487, b: false },
+    { w: "Stanford", d: 13.516, b: false },
+    { w: "MBA", d: 13.545, b: false },
+    { w: "candidate", d: 13.574, b: false },
+    { w: "from", d: 13.603, b: false },
+    { w: "Portland.", d: 13.632, b: false },
+    { w: "As", d: 13.661, b: false },
+    { w: "you're", d: 13.690, b: true },
+    { w: "hiring", d: 13.719, b: true },
+    { w: "for", d: 13.748, b: true },
+    { w: "a", d: 13.777, b: true },
+    { w: "shoe", d: 13.806, b: true },
+    { w: "salesman", d: 13.835, b: true },
+    { w: "for", d: 13.864, b: true },
+    { w: "your", d: 13.893, b: true },
+    { w: "Eugene", d: 13.922, b: true },
+    { w: "running", d: 13.951, b: true },
+    { w: "store,", d: 13.980, b: true },
+    { w: "he", d: 14.009, b: false },
+    { w: "would", d: 14.038, b: false },
+    { w: "be", d: 14.067, b: false },
+    { w: "an", d: 14.096, b: false },
+    { w: "unusually", d: 14.125, b: true },
+    { w: "good", d: 14.154, b: true },
+    { w: "fit.", d: 14.183, b: true },
+    { w: "He's", d: 14.212, b: false },
+    { w: "a", d: 14.241, b: false },
+    { w: "sub-4:15", d: 14.270, b: false },
+    { w: "miler", d: 14.299, b: false },
+    { w: "so", d: 14.328, b: false },
+    { w: "he'll", d: 14.357, b: false },
+    { w: "talk", d: 14.386, b: false },
+    { w: "credibly", d: 14.415, b: false },
+    { w: "to", d: 14.444, b: false },
+    { w: "the", d: 14.473, b: false },
+    { w: "runners", d: 14.502, b: false },
+    { w: "you", d: 14.531, b: false },
+    { w: "mentioned", d: 14.560, b: false },
+    { w: "losing", d: 14.589, b: false },
+    { w: "to", d: 14.618, b: false },
+    { w: "the", d: 14.647, b: false },
+    { w: "bigger", d: 14.676, b: false },
+    { w: "stores.", d: 14.705, b: false },
+    { w: "He's", d: 14.734, b: false },
+    { w: "currently", d: 14.763, b: true },
+    { w: "selling", d: 14.792, b: true },
+    { w: "Onitsuka", d: 14.821, b: true },
+    { w: "Tigers", d: 14.850, b: true },
+    { w: "out", d: 14.879, b: true },
+    { w: "of", d: 14.908, b: true },
+    { w: "his", d: 14.937, b: true },
+    { w: "car", d: 14.966, b: true },
+    { w: "at", d: 14.995, b: false },
+    { w: "track", d: 15.024, b: false },
+    { w: "meets.", d: 15.053, b: false },
+    { w: "His", d: 15.082, b: false },
+    { w: "Army", d: 15.111, b: false },
+    { w: "background", d: 15.140, b: false },
+    { w: "reads", d: 15.169, b: false },
+    { w: "as", d: 15.198, b: false },
+    { w: "reliability", d: 15.227, b: true },
+    { w: "under", d: 15.256, b: true },
+    { w: "pressure,", d: 15.285, b: true },
+    { w: "and", d: 15.314, b: false },
+    { w: "his", d: 15.343, b: false },
+    { w: "GSB", d: 15.372, b: false },
+    { w: "training", d: 15.401, b: false },
+    { w: "means", d: 15.430, b: false },
+    { w: "he'll", d: 15.459, b: false },
+    { w: "grasp", d: 15.488, b: false },
+    { w: "your", d: 15.517, b: false },
+    { w: "inventory", d: 15.546, b: false },
+    { w: "problem", d: 15.575, b: false },
+    { w: "in", d: 15.604, b: false },
+    { w: "one", d: 15.633, b: false },
+    { w: "conversation.", d: 15.662, b: false },
+    { w: "Two", d: 15.691, b: true },
+    { w: "flags", d: 15.720, b: true },
+    { w: "worth", d: 15.749, b: true },
+    { w: "naming:", d: 15.778, b: true },
+    { w: "he's", d: 15.807, b: false },
+    { w: "building", d: 15.836, b: false },
+    { w: "Blue", d: 15.865, b: false },
+    { w: "Ribbon", d: 15.894, b: false },
+    { w: "Sports", d: 15.923, b: false },
+    { w: "on", d: 15.952, b: false },
+    { w: "the", d: 15.981, b: false },
+    { w: "side,", d: 16.010, b: false },
+    { w: "and", d: 16.039, b: false },
+    { w: "if", d: 16.068, b: false },
+    { w: "you", d: 16.097, b: false },
+    { w: "stock", d: 16.126, b: false },
+    { w: "Adidas", d: 16.155, b: false },
+    { w: "or", d: 16.184, b: false },
+    { w: "Puma", d: 16.213, b: false },
+    { w: "he", d: 16.242, b: false },
+    { w: "has", d: 16.271, b: false },
+    { w: "strong", d: 16.300, b: false },
+    { w: "opinions", d: 16.329, b: false },
+    { w: "about", d: 16.358, b: false },
+    { w: "both…", d: 16.387, b: false },
   ],
   [
-    { w: "I", d: 13.463, b: true },
-    { w: "recommend", d: 13.492, b: true },
-    { w: "you", d: 13.521, b: true },
-    { w: "hire", d: 13.550, b: true },
-    { w: "this", d: 13.579, b: true },
-    { w: "man", d: 13.608, b: true },
-    { w: "if", d: 13.637, b: true },
-    { w: "you", d: 13.666, b: true },
-    { w: "have", d: 13.695, b: true },
-    { w: "a", d: 13.724, b: true },
-    { w: "chance", d: 13.753, b: true },
+    { w: "I", d: 16.416, b: true },
+    { w: "recommend", d: 16.445, b: true },
+    { w: "you", d: 16.474, b: true },
+    { w: "hire", d: 16.503, b: true },
+    { w: "this", d: 16.532, b: true },
+    { w: "man", d: 16.561, b: true },
+    { w: "if", d: 16.590, b: true },
+    { w: "you", d: 16.619, b: true },
+    { w: "have", d: 16.648, b: true },
+    { w: "a", d: 16.677, b: true },
+    { w: "chance", d: 16.706, b: true },
   ],
 ];
 
@@ -152,12 +153,6 @@ export default function HomeDemo() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="dx-header-logo" src="/logo.svg" alt="warmpitch.me" />
       </div>
-
-      <section className="dx-scene dx-scene-hero">
-        <h1 className="dx-hero-h1">Your résumé, pitched by their AI.</h1>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="dx-hero-logo" src="/logo.svg" alt="warmpitch.me" />
-      </section>
 
       <section className="dx-scene dx-scene-setup">
         <div className="dx-auth-card">
@@ -200,6 +195,10 @@ export default function HomeDemo() {
         <div className="dx-url-bar">
           warmpitch.me/<span className="dx-strong">k7n2</span>
         </div>
+        <div className="dx-pitch-label dx-pitch-label-self">Your page</div>
+        <div className="dx-pitch-label dx-pitch-label-recipient">
+          Recruiter&apos;s screen
+        </div>
         <div className="dx-avatar">PK</div>
         <h1 className="dx-pitch-name">Phil Knight</h1>
         <p className="dx-tagline">MBA @ Stanford GSB</p>
@@ -215,6 +214,37 @@ export default function HomeDemo() {
           <span className="dx-label">Ask AI</span>
           <span className="dx-click-ripple"></span>
         </button>
+      </section>
+
+      <section className="dx-scene dx-scene-text dx-scene-text-self">
+        <div className="dx-text-frame">
+          <div className="dx-text-header">
+            <span className="dx-text-back">‹</span>
+            <span className="dx-text-contact">Recruiter</span>
+          </div>
+          <div className="dx-text-body">
+            <div className="dx-text-bubble dx-text-bubble-out">
+              Here, use this — warmpitch.me/k7n2
+            </div>
+            <div className="dx-text-status">Delivered</div>
+          </div>
+          <div className="dx-text-input">iMessage</div>
+        </div>
+      </section>
+
+      <section className="dx-scene dx-scene-text dx-scene-text-recipient">
+        <div className="dx-text-frame">
+          <div className="dx-text-header">
+            <span className="dx-text-back">‹</span>
+            <span className="dx-text-contact">Phil Knight</span>
+          </div>
+          <div className="dx-text-body">
+            <div className="dx-text-bubble dx-text-bubble-in">
+              Here, use this — warmpitch.me/k7n2
+            </div>
+          </div>
+          <div className="dx-text-input">iMessage</div>
+        </div>
       </section>
 
       <section className="dx-scene dx-scene-ai">

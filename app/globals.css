@@ -1385,74 +1385,59 @@ button {
   will-change: opacity;
 }
 
-/* ─── scene timing (kept identical to original loop) ─────────────── */
+/* ─── scene timing ────────────────────────────────────────────────
+   20s loop, 6 scenes:
+     Setup           0  – 4.5s   (0%   – 22.5%)
+     Pitch  #1       4.5– 6.5s   (22.5%– 32.5%)   "Your page"
+     Text msg (self) 6.5– 8.5s   (32.5%– 42.5%)   Phil's phone, blue bubble right
+     Text msg (recip) 8.5–10.5s  (42.5%– 52.5%)   Recruiter's phone, grey bubble left
+     Pitch  #2      10.5–12s     (52.5%– 60%)     "Recruiter's screen", click ripple
+     AI window      12  –19s     (60%  – 95%)     streaming response
+     Wrap           19  –20s     (95%  –100%)     crossfade back to Setup
+   Each transition is a 0.5s (2.5%) crossfade — both scenes' opacities
+   ramp simultaneously so there's never a blank moment. */
 
-.dx-scene-hero {
-  animation: dx-hero 20s linear infinite;
-}
-@keyframes dx-hero {
-  0%, 15%       { opacity: 1; }
-  16.5%, 99.9%  { opacity: 0; }
-  100%          { opacity: 1; }
-}
 .dx-scene-setup {
   animation: dx-setup 20s linear infinite;
 }
 @keyframes dx-setup {
-  0%, 15%      { opacity: 0; }
-  16.5%, 30%   { opacity: 1; }
-  31.5%, 100%  { opacity: 0; }
+  0%, 20%      { opacity: 1; }
+  22.5%, 95%   { opacity: 0; }
+  100%         { opacity: 1; }
 }
 .dx-scene-pitch {
   animation: dx-pitch 20s linear infinite;
 }
 @keyframes dx-pitch {
+  0%, 20%      { opacity: 0; }
+  22.5%, 30%   { opacity: 1; }   /* window #1 — Your page */
+  32.5%, 50%   { opacity: 0; }
+  52.5%, 57.5% { opacity: 1; }   /* window #2 — Recruiter's screen */
+  60%, 100%    { opacity: 0; }
+}
+.dx-scene-text-self {
+  animation: dx-textself 20s linear infinite;
+}
+@keyframes dx-textself {
   0%, 30%      { opacity: 0; }
-  31.5%, 40%   { opacity: 1; }
-  41.5%, 100%  { opacity: 0; }
+  32.5%, 40%   { opacity: 1; }
+  42.5%, 100%  { opacity: 0; }
+}
+.dx-scene-text-recipient {
+  animation: dx-textrecip 20s linear infinite;
+}
+@keyframes dx-textrecip {
+  0%, 40%      { opacity: 0; }
+  42.5%, 50%   { opacity: 1; }
+  52.5%, 100%  { opacity: 0; }
 }
 .dx-scene-ai {
   animation: dx-aiwin 20s linear infinite;
 }
 @keyframes dx-aiwin {
-  0%, 40%       { opacity: 0; }
-  42.5%, 88.5%  { opacity: 1; }
-  91.5%, 100%   { opacity: 0; }
-}
-
-/* ─── hero scene ─────────────────────────────────────────────────── */
-
-.dx-scene-hero {
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-.dx-hero-h1 {
-  margin: 0 0 clamp(18px, 3vw, 24px);
-  font-size: clamp(22px, 5.2vw, 44px);
-  line-height: 1.08;
-  letter-spacing: -0.03em;
-  font-weight: 600;
-  max-width: 18ch;
-  animation: dx-fadeUpH1 20s linear infinite;
-  opacity: 0;
-}
-.dx-hero-logo {
-  display: block;
-  height: clamp(20px, 3.4vw, 26px);
-  width: auto;
-  animation: dx-fadeUpLede 20s linear infinite;
-  opacity: 0;
-}
-@keyframes dx-fadeUpH1 {
-  0%, 1.5%     { opacity: 0; transform: translateY(12px); }
-  5.25%, 15%   { opacity: 1; transform: translateY(0); }
-  16.5%, 100%  { opacity: 0; transform: translateY(-4px); }
-}
-@keyframes dx-fadeUpLede {
-  0%, 3.75%    { opacity: 0; transform: translateY(12px); }
-  7.5%, 15%    { opacity: 1; transform: translateY(0); }
-  16.5%, 100%  { opacity: 0; transform: translateY(-4px); }
+  0%, 57.5%    { opacity: 0; }
+  60%, 95%     { opacity: 1; }
+  100%         { opacity: 0; }
 }
 
 /* ─── setup scene ────────────────────────────────────────────────── */
@@ -1549,9 +1534,9 @@ button {
 .dx-typed-name { animation: dx-typeName 20s linear infinite; width: 0; }
 .dx-typed-tag  { animation: dx-typeTag  20s linear infinite; width: 0; }
 .dx-typed-li   { animation: dx-typeLi   20s linear infinite; width: 0; }
-@keyframes dx-typeName { 0%, 18%    { width: 0 } 19.25%, 100% { width: 75% } }
-@keyframes dx-typeTag  { 0%, 19.75% { width: 0 } 21%,    100% { width: 75% } }
-@keyframes dx-typeLi   { 0%, 21.5%  { width: 0 } 22.75%, 100% { width: 75% } }
+@keyframes dx-typeName { 0%, 5%  { width: 0 } 8%,  100% { width: 75% } }
+@keyframes dx-typeTag  { 0%, 9%  { width: 0 } 12%, 100% { width: 75% } }
+@keyframes dx-typeLi   { 0%, 13% { width: 0 } 16%, 100% { width: 75% } }
 
 .dx-resume-typed-wrap {
   position: relative;
@@ -1565,19 +1550,19 @@ button {
   animation: dx-resumePaste 20s steps(1, end) infinite;
 }
 @keyframes dx-resumePaste {
-  0%, 24.2%    { height: 0 }
-  24.25%, 100% { height: 100% }
+  0%, 16.5%   { height: 0 }
+  17%, 100%   { height: 100% }
 }
 @keyframes dx-pasteFlash {
-  0%, 24.2%   { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
-  24.25%      { box-shadow: 0 0 0 3px rgba(214, 112, 87, 0.18); }
-  25.5%, 100% { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
+  0%, 16.5%   { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
+  17%         { box-shadow: 0 0 0 3px rgba(214, 112, 87, 0.18); }
+  18.5%, 100% { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
 }
 .dx-cta-pressed { animation: dx-ctaPress 20s linear infinite; }
 @keyframes dx-ctaPress {
-  0%, 28.45%  { transform: scale(1); box-shadow: 0 2px 6px var(--shadow); }
-  28.5%       { transform: scale(0.97); box-shadow: 0 1px 2px var(--shadow); }
-  29.25%      { transform: scale(1); box-shadow: 0 6px 18px var(--shadow-hover); }
+  0%, 19%     { transform: scale(1); box-shadow: 0 2px 6px var(--shadow); }
+  19.5%       { transform: scale(0.97); box-shadow: 0 1px 2px var(--shadow); }
+  20%         { transform: scale(1); box-shadow: 0 6px 18px var(--shadow-hover); }
   100%        { transform: scale(1); box-shadow: 0 2px 6px var(--shadow); }
 }
 
@@ -1668,12 +1653,12 @@ button {
   animation: dx-aiPulseClick 20s linear infinite;
 }
 @keyframes dx-aiPulseClick {
-  0%, 31.5%  { transform: translateY(0); box-shadow: 0 2px 8px var(--btn-shadow-rest); }
-  36.5%      { transform: translateY(-3px); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
-  37.5%      { transform: translateY(-3px); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
-  37.75%     { transform: scale(0.95); box-shadow: 0 1px 2px var(--btn-shadow-rest); }
-  38.75%     { transform: scale(1); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
-  40%, 100%  { transform: scale(1); box-shadow: 0 2px 8px var(--btn-shadow-rest); }
+  0%, 52.5%  { transform: translateY(0); box-shadow: 0 2px 8px var(--btn-shadow-rest); }
+  55.5%      { transform: translateY(-3px); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
+  56.5%      { transform: translateY(-3px); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
+  56.7%      { transform: scale(0.95); box-shadow: 0 1px 2px var(--btn-shadow-rest); }
+  57.5%      { transform: scale(1); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
+  58%, 100%  { transform: scale(1); box-shadow: 0 2px 8px var(--btn-shadow-rest); }
 }
 .dx-click-ripple {
   position: absolute;
@@ -1689,9 +1674,9 @@ button {
   animation: dx-ripple 20s linear infinite;
 }
 @keyframes dx-ripple {
-  0%, 37.5%   { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
-  37.75%      { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
-  39.25%      { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
+  0%, 56.5%   { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  56.7%       { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+  58%         { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
   100%        { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
 }
 
@@ -1715,10 +1700,9 @@ button {
   animation: dx-aiSlideIn 20s linear infinite;
 }
 @keyframes dx-aiSlideIn {
-  0%, 40%       { opacity: 0; transform: translateY(40px); }
-  42.5%         { opacity: 1; transform: translateY(0); }
-  88.5%         { opacity: 1; transform: translateY(0); }
-  91.5%, 100%   { opacity: 0; transform: translateY(0); }
+  0%, 57.5%   { opacity: 0; transform: translateY(40px); }
+  60%, 95%    { opacity: 1; transform: translateY(0); }
+  100%        { opacity: 0; transform: translateY(0); }
 }
 .dx-aiw-bar {
   height: clamp(32px, 5vw, 38px);
@@ -1781,9 +1765,9 @@ button {
   animation: dx-userMsgIn 20s linear infinite;
 }
 @keyframes dx-userMsgIn {
-  0%, 47.5%     { opacity: 0; transform: translateY(10px) scale(0.96); }
-  48%, 88.5%    { opacity: 1; transform: translateY(0) scale(1); }
-  91.5%, 100%   { opacity: 0; transform: translateY(0) scale(1); }
+  0%, 63.5%   { opacity: 0; transform: translateY(10px) scale(0.96); }
+  64.5%, 95%  { opacity: 1; transform: translateY(0) scale(1); }
+  100%        { opacity: 0; transform: translateY(0) scale(1); }
 }
 
 .dx-aiw-response {
@@ -1840,9 +1824,9 @@ button {
 .dx-thinking .dx-d:nth-child(3) { animation-delay: 0.4s; }
 @keyframes dx-thinkBlink { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
 @keyframes dx-thinkFade {
-  0%, 48.75%   { opacity: 0; }
-  49%, 52.25%  { opacity: 1; }
-  52.5%, 100%  { opacity: 0; }
+  0%, 64.5%   { opacity: 0; }
+  65%, 67%    { opacity: 1; }
+  67.5%, 100% { opacity: 0; }
 }
 
 .dx-aiw-composer {
@@ -1874,14 +1858,14 @@ button {
   animation: dx-promptInstant 20s steps(1, end) infinite;
 }
 @keyframes dx-promptInstant {
-  0%, 45.95%  { opacity: 0; }
-  46%         { opacity: 1; }
-  48%, 100%   { opacity: 0; }
+  0%, 61.95%  { opacity: 0; }
+  62%         { opacity: 1; }
+  64%, 100%   { opacity: 0; }
 }
 @keyframes dx-composerFlash {
-  0%, 45.95%  { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
-  46%         { box-shadow: 0 0 0 3px rgba(214, 112, 87, 0.18); }
-  47.25%, 100%{ box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
+  0%, 63.45%  { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
+  63.5%       { box-shadow: 0 0 0 3px rgba(214, 112, 87, 0.18); }
+  64%, 100%   { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
 }
 
 .dx-aiw-send {
@@ -1903,10 +1887,153 @@ button {
   display: block;
 }
 @keyframes dx-sendPress {
-  0%, 45.95%  { transform: scale(1); background: #bdbdc2; }
-  46%         { transform: scale(1); background: var(--text); }
-  47.45%      { transform: scale(1); background: var(--text); }
-  47.5%       { transform: scale(0.9); background: var(--text); }
-  48%, 100%   { transform: scale(1); background: #bdbdc2; }
+  0%, 63.45%  { transform: scale(1); background: #bdbdc2; }
+  63.5%       { transform: scale(1); background: var(--text); }
+  63.95%      { transform: scale(1); background: var(--text); }
+  64%         { transform: scale(0.9); background: var(--text); }
+  64.5%, 100% { transform: scale(1); background: #bdbdc2; }
+}
+
+/* ─── pitch labels (Your page / Recruiter's screen) ──────────────── */
+
+.dx-pitch-label {
+  position: absolute;
+  top: clamp(86px, 14vw, 110px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(11px, 1.8vw, 13px);
+  color: var(--text-dim);
+  letter-spacing: -0.005em;
+  font-style: italic;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.dx-pitch-label-self {
+  animation: dx-pitchLabelSelf 20s linear infinite;
+}
+.dx-pitch-label-recipient {
+  animation: dx-pitchLabelRecipient 20s linear infinite;
+}
+@keyframes dx-pitchLabelSelf {
+  0%, 22%      { opacity: 0; }
+  22.5%, 30%   { opacity: 1; }
+  32.5%, 100%  { opacity: 0; }
+}
+@keyframes dx-pitchLabelRecipient {
+  0%, 52%      { opacity: 0; }
+  52.5%, 57.5% { opacity: 1; }
+  60%, 100%    { opacity: 0; }
+}
+
+/* ─── text message scene (iMessage-style, two perspectives) ──────── */
+
+.dx-scene-text {
+  align-items: center;
+  justify-content: center;
+}
+.dx-text-frame {
+  width: 100%;
+  max-width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: clamp(20px, 3vw, 28px);
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+.dx-text-header {
+  position: relative;
+  height: clamp(38px, 6vw, 44px);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+.dx-text-back {
+  font-size: 22px;
+  color: #007aff;
+  font-weight: 300;
+  line-height: 1;
+}
+.dx-text-contact {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(13px, 2.2vw, 15px);
+  font-weight: 600;
+  color: var(--text);
+}
+.dx-text-body {
+  flex: 1;
+  padding: clamp(14px, 2.5vw, 18px) 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: clamp(180px, 30vw, 240px);
+}
+.dx-text-bubble {
+  max-width: 78%;
+  padding: clamp(8px, 1.5vw, 10px) clamp(12px, 2.2vw, 14px);
+  border-radius: 18px;
+  font-size: clamp(12px, 2.1vw, 14px);
+  line-height: 1.4;
+  word-break: break-word;
+  opacity: 0;
+}
+.dx-text-bubble-out {
+  align-self: flex-end;
+  background: #007aff;
+  color: #fff;
+  border-bottom-right-radius: 6px;
+  transform: translateY(20px) scale(0.95);
+  animation: dx-bubbleSelf 20s linear infinite;
+}
+.dx-text-bubble-in {
+  align-self: flex-start;
+  background: #e5e5ea;
+  color: var(--text);
+  border-bottom-left-radius: 6px;
+  transform: translateY(20px) scale(0.95);
+  animation: dx-bubbleRecip 20s linear infinite;
+}
+.dx-text-status {
+  align-self: flex-end;
+  font-size: clamp(10px, 1.5vw, 11px);
+  color: var(--text-dim);
+  margin-top: 2px;
+  margin-right: 4px;
+  opacity: 0;
+  animation: dx-deliveredSelf 20s linear infinite;
+}
+.dx-text-input {
+  height: clamp(34px, 5.5vw, 38px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  background: var(--bg);
+  font-size: clamp(11px, 1.9vw, 12px);
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+@keyframes dx-bubbleSelf {
+  0%, 33%      { opacity: 0; transform: translateY(20px) scale(0.95); }
+  35%, 42.5%   { opacity: 1; transform: translateY(0) scale(1); }
+  100%         { opacity: 0; transform: translateY(20px) scale(0.95); }
+}
+@keyframes dx-bubbleRecip {
+  0%, 43%      { opacity: 0; transform: translateY(20px) scale(0.95); }
+  45%, 52.5%   { opacity: 1; transform: translateY(0) scale(1); }
+  100%         { opacity: 0; transform: translateY(20px) scale(0.95); }
+}
+@keyframes dx-deliveredSelf {
+  0%, 37%      { opacity: 0; }
+  38%, 42.5%   { opacity: 1; }
+  100%         { opacity: 0; }
 }
 
