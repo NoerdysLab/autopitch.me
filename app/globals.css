@@ -153,7 +153,7 @@ button {
   position: relative;
   width: 100%;
   /* Storyboard layout: scenes are absolutely positioned and overlay
-     each other, fading through the 20s loop. The wrap defines the
+     each other, fading through the 23s loop. The wrap defines the
      stage size — taller on phones, wider on desktop. svh keeps the
      box stable as iOS Safari shows/hides its URL bar during scroll
      (dvh would visibly resize the demo). */
@@ -1386,57 +1386,55 @@ button {
 }
 
 /* ─── scene timing ────────────────────────────────────────────────
-   20s loop, 6 scenes:
-     Setup           0  – 4.5s   (0%   – 22.5%)
-     Pitch  #1       4.5– 6.5s   (22.5%– 32.5%)   "Your page"
-     Text msg (self) 6.5– 8.5s   (32.5%– 42.5%)   Phil's phone, blue bubble right
-     Text msg (recip) 8.5–10.5s  (42.5%– 52.5%)   Recruiter's phone, grey bubble left
-     Pitch  #2      10.5–12s     (52.5%– 60%)     "Recruiter's screen", click ripple
-     AI window      12  –19s     (60%  – 95%)     streaming response
-     Wrap           19  –20s     (95%  –100%)     crossfade back to Setup
-   Each transition is a 0.5s (2.5%) crossfade — both scenes' opacities
-   ramp simultaneously so there's never a blank moment. */
+   23s loop, 6 scenes:
+     Setup           0  – 4s     (0%   – 17.4%)
+     Pitch  #1       4.5– 6.5s   (19.5%– 28.3%)   "Your page"
+     Text msg (self) 6.5– 9.5s   (28.3%– 41.3%)   Phil's phone, blue bubble right
+     Text msg (recip)9.5–12.5s   (41.3%– 54.3%)   Recruiter's phone, grey bubble + click on link
+     Pitch  #2     12.5–14s     (54.3%– 60.9%)   "Recruiter's screen", click ripple
+     AI window     14  –21s     (60.9%– 91.3%)   streaming response
+     Wrap          21  –23s     (91.3%–100%)     long crossfade back to Setup */
 
 .dx-scene-setup {
-  animation: dx-setup 20s linear infinite;
+  animation: dx-setup 23s linear infinite;
 }
 @keyframes dx-setup {
-  0%, 20%      { opacity: 1; }
-  22.5%, 95%   { opacity: 0; }
+  0%, 17.4%    { opacity: 1; }
+  19.5%, 91.3% { opacity: 0; }
   100%         { opacity: 1; }
 }
 .dx-scene-pitch {
-  animation: dx-pitch 20s linear infinite;
+  animation: dx-pitch 23s linear infinite;
 }
 @keyframes dx-pitch {
-  0%, 20%      { opacity: 0; }
-  22.5%, 30%   { opacity: 1; }   /* window #1 — Your page */
-  32.5%, 50%   { opacity: 0; }
-  52.5%, 57.5% { opacity: 1; }   /* window #2 — Recruiter's screen */
-  60%, 100%    { opacity: 0; }
+  0%, 17.4%    { opacity: 0; }
+  19.5%, 28.3% { opacity: 1; }   /* window #1 — Your page */
+  30.4%, 52.2% { opacity: 0; }
+  54.3%, 58.7% { opacity: 1; }   /* window #2 — Recruiter's screen */
+  60.9%, 100%  { opacity: 0; }
 }
 .dx-scene-text-self {
-  animation: dx-textself 20s linear infinite;
+  animation: dx-textself 23s linear infinite;
 }
 @keyframes dx-textself {
-  0%, 30%      { opacity: 0; }
-  32.5%, 40%   { opacity: 1; }
-  42.5%, 100%  { opacity: 0; }
+  0%, 28.3%    { opacity: 0; }
+  30.4%, 39.1% { opacity: 1; }
+  41.3%, 100%  { opacity: 0; }
 }
 .dx-scene-text-recipient {
-  animation: dx-textrecip 20s linear infinite;
+  animation: dx-textrecip 23s linear infinite;
 }
 @keyframes dx-textrecip {
-  0%, 40%      { opacity: 0; }
-  42.5%, 50%   { opacity: 1; }
-  52.5%, 100%  { opacity: 0; }
+  0%, 39.1%    { opacity: 0; }
+  41.3%, 52.2% { opacity: 1; }
+  54.3%, 100%  { opacity: 0; }
 }
 .dx-scene-ai {
-  animation: dx-aiwin 20s linear infinite;
+  animation: dx-aiwin 23s linear infinite;
 }
 @keyframes dx-aiwin {
-  0%, 57.5%    { opacity: 0; }
-  60%, 95%     { opacity: 1; }
+  0%, 58.7%    { opacity: 0; }
+  60.9%, 91.3% { opacity: 1; }
   100%         { opacity: 0; }
 }
 
@@ -1531,17 +1529,33 @@ button {
   white-space: nowrap;
   vertical-align: bottom;
 }
-.dx-typed-name { animation: dx-typeName 20s linear infinite; width: 0; }
-.dx-typed-tag  { animation: dx-typeTag  20s linear infinite; width: 0; }
-.dx-typed-li   { animation: dx-typeLi   20s linear infinite; width: 0; }
-@keyframes dx-typeName { 0%, 5%  { width: 0 } 8%,  100% { width: 75% } }
-@keyframes dx-typeTag  { 0%, 9%  { width: 0 } 12%, 100% { width: 75% } }
-@keyframes dx-typeLi   { 0%, 13% { width: 0 } 16%, 100% { width: 75% } }
+.dx-typed-name { animation: dx-typeName 23s linear infinite; width: 0; }
+.dx-typed-tag  { animation: dx-typeTag  23s linear infinite; width: 0; }
+.dx-typed-li   { animation: dx-typeLi   23s linear infinite; width: 0; }
+/* Each type-in expands width 0 → 75% during its window, holds while
+   the setup scene is visible, then SNAPS back to 0 right after the
+   scene fades out — so when the scene fades back in for the next loop
+   wrap (91.3% → 100%) the field is empty, not pre-filled. */
+@keyframes dx-typeName {
+  0%, 4.5%      { width: 0 }
+  7%, 17.4%     { width: 75% }
+  19.5%, 100%   { width: 0 }
+}
+@keyframes dx-typeTag {
+  0%, 8%        { width: 0 }
+  10.5%, 17.4%  { width: 75% }
+  19.5%, 100%   { width: 0 }
+}
+@keyframes dx-typeLi {
+  0%, 11.5%     { width: 0 }
+  14%, 17.4%    { width: 75% }
+  19.5%, 100%   { width: 0 }
+}
 
 .dx-resume-typed-wrap {
   position: relative;
   border-radius: 10px;
-  animation: dx-pasteFlash 20s linear infinite;
+  animation: dx-pasteFlash 23s linear infinite;
 }
 .dx-resume-lines {
   height: 0;
@@ -1549,21 +1563,25 @@ button {
   white-space: pre-wrap;
   animation: dx-resumePaste 20s steps(1, end) infinite;
 }
+/* Same reset-after-fade-out trick: paste at 15%, height stays full while
+   scene is up, then snaps back to 0 at 19.5% so the next loop's fade-in
+   shows an empty textarea. */
 @keyframes dx-resumePaste {
-  0%, 16.5%   { height: 0 }
-  17%, 100%   { height: 100% }
+  0%, 14.5%     { height: 0 }
+  15%, 17.4%    { height: 100% }
+  19.5%, 100%   { height: 0 }
 }
 @keyframes dx-pasteFlash {
-  0%, 16.5%   { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
-  17%         { box-shadow: 0 0 0 3px rgba(214, 112, 87, 0.18); }
-  18.5%, 100% { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
+  0%, 14.5%   { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
+  15%         { box-shadow: 0 0 0 3px rgba(214, 112, 87, 0.18); }
+  16%, 100%   { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
 }
-.dx-cta-pressed { animation: dx-ctaPress 20s linear infinite; }
+.dx-cta-pressed { animation: dx-ctaPress 23s linear infinite; }
 @keyframes dx-ctaPress {
-  0%, 19%     { transform: scale(1); box-shadow: 0 2px 6px var(--shadow); }
-  19.5%       { transform: scale(0.97); box-shadow: 0 1px 2px var(--shadow); }
-  20%         { transform: scale(1); box-shadow: 0 6px 18px var(--shadow-hover); }
-  100%        { transform: scale(1); box-shadow: 0 2px 6px var(--shadow); }
+  0%, 16.5%   { transform: scale(1); box-shadow: 0 2px 6px var(--shadow); }
+  17%         { transform: scale(0.97); box-shadow: 0 1px 2px var(--shadow); }
+  17.5%       { transform: scale(1); box-shadow: 0 6px 18px var(--shadow-hover); }
+  19.5%, 100% { transform: scale(1); box-shadow: 0 2px 6px var(--shadow); }
 }
 
 /* ─── pitch scene ────────────────────────────────────────────────── */
@@ -1650,14 +1668,14 @@ button {
 .dx-ai-btn-claude {
   --btn-shadow-rest: rgba(214, 112, 87, 0.10);
   --btn-shadow-hover: rgba(214, 112, 87, 0.30);
-  animation: dx-aiPulseClick 20s linear infinite;
+  animation: dx-aiPulseClick 23s linear infinite;
 }
 @keyframes dx-aiPulseClick {
-  0%, 52.5%  { transform: translateY(0); box-shadow: 0 2px 8px var(--btn-shadow-rest); }
-  55.5%      { transform: translateY(-3px); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
-  56.5%      { transform: translateY(-3px); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
-  56.7%      { transform: scale(0.95); box-shadow: 0 1px 2px var(--btn-shadow-rest); }
-  57.5%      { transform: scale(1); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
+  0%, 54%    { transform: translateY(0); box-shadow: 0 2px 8px var(--btn-shadow-rest); }
+  56%        { transform: translateY(-3px); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
+  56.3%      { transform: translateY(-3px); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
+  56.5%      { transform: scale(0.95); box-shadow: 0 1px 2px var(--btn-shadow-rest); }
+  57%        { transform: scale(1); box-shadow: 0 12px 28px var(--btn-shadow-hover); }
   58%, 100%  { transform: scale(1); box-shadow: 0 2px 8px var(--btn-shadow-rest); }
 }
 .dx-click-ripple {
@@ -1671,11 +1689,11 @@ button {
   border: 2px solid var(--text);
   opacity: 0;
   pointer-events: none;
-  animation: dx-ripple 20s linear infinite;
+  animation: dx-ripple 23s linear infinite;
 }
 @keyframes dx-ripple {
-  0%, 56.5%   { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
-  56.7%       { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+  0%, 56.3%   { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  56.5%       { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
   58%         { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
   100%        { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
 }
@@ -1697,12 +1715,12 @@ button {
   transform: translateY(40px);
   display: flex;
   flex-direction: column;
-  animation: dx-aiSlideIn 20s linear infinite;
+  animation: dx-aiSlideIn 23s linear infinite;
 }
 @keyframes dx-aiSlideIn {
-  0%, 57.5%   { opacity: 0; transform: translateY(40px); }
-  60%, 95%    { opacity: 1; transform: translateY(0); }
-  100%        { opacity: 0; transform: translateY(0); }
+  0%, 58.7%    { opacity: 0; transform: translateY(40px); }
+  60.9%, 91.3% { opacity: 1; transform: translateY(0); }
+  100%         { opacity: 0; transform: translateY(0); }
 }
 .dx-aiw-bar {
   height: clamp(32px, 5vw, 38px);
@@ -1762,12 +1780,12 @@ button {
   text-align: left;
   opacity: 0;
   transform: translateY(10px) scale(0.96);
-  animation: dx-userMsgIn 20s linear infinite;
+  animation: dx-userMsgIn 23s linear infinite;
 }
 @keyframes dx-userMsgIn {
-  0%, 63.5%   { opacity: 0; transform: translateY(10px) scale(0.96); }
-  64.5%, 95%  { opacity: 1; transform: translateY(0) scale(1); }
-  100%        { opacity: 0; transform: translateY(0) scale(1); }
+  0%, 64.6%    { opacity: 0; transform: translateY(10px) scale(0.96); }
+  65%, 91.3%   { opacity: 1; transform: translateY(0) scale(1); }
+  100%         { opacity: 0; transform: translateY(0) scale(1); }
 }
 
 .dx-aiw-response {
@@ -1791,7 +1809,7 @@ button {
 .dx-aiw-response .dx-w {
   opacity: 0;
   display: inline;
-  animation: dx-wordReveal 20s linear infinite;
+  animation: dx-wordReveal 23s linear infinite;
   animation-fill-mode: both;
 }
 @keyframes dx-wordReveal {
@@ -1811,7 +1829,7 @@ button {
   color: var(--text-dim);
   font-size: clamp(11px, 1.9vw, 13px);
   opacity: 0;
-  animation: dx-thinkFade 20s linear infinite;
+  animation: dx-thinkFade 23s linear infinite;
 }
 .dx-thinking .dx-d {
   width: 6px;
@@ -1824,9 +1842,9 @@ button {
 .dx-thinking .dx-d:nth-child(3) { animation-delay: 0.4s; }
 @keyframes dx-thinkBlink { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
 @keyframes dx-thinkFade {
-  0%, 64.5%   { opacity: 0; }
-  65%, 67%    { opacity: 1; }
-  67.5%, 100% { opacity: 0; }
+  0%, 64.8%    { opacity: 0; }
+  65.2%, 67%   { opacity: 1; }
+  67.4%, 100%  { opacity: 0; }
 }
 
 .dx-aiw-composer {
@@ -1840,7 +1858,7 @@ button {
   padding: clamp(8px, 1.5vw, 12px) clamp(10px, 2vw, 14px);
   min-height: 44px;
   flex-shrink: 0;
-  animation: dx-composerFlash 20s linear infinite;
+  animation: dx-composerFlash 23s linear infinite;
 }
 .dx-aiw-input {
   flex: 1;
@@ -1858,14 +1876,14 @@ button {
   animation: dx-promptInstant 20s steps(1, end) infinite;
 }
 @keyframes dx-promptInstant {
-  0%, 61.95%  { opacity: 0; }
-  62%         { opacity: 1; }
-  64%, 100%   { opacity: 0; }
+  0%, 62.55%  { opacity: 0; }
+  62.6%       { opacity: 1; }
+  64.5%, 100% { opacity: 0; }
 }
 @keyframes dx-composerFlash {
-  0%, 63.45%  { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
-  63.5%       { box-shadow: 0 0 0 3px rgba(214, 112, 87, 0.18); }
-  64%, 100%   { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
+  0%, 63.85%  { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
+  63.9%       { box-shadow: 0 0 0 3px rgba(214, 112, 87, 0.18); }
+  64.5%, 100% { box-shadow: 0 0 0 0 rgba(214, 112, 87, 0); }
 }
 
 .dx-aiw-send {
@@ -1878,7 +1896,7 @@ button {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  animation: dx-sendPress 20s linear infinite;
+  animation: dx-sendPress 23s linear infinite;
   transform: scale(1);
 }
 .dx-aiw-send svg {
@@ -1887,11 +1905,11 @@ button {
   display: block;
 }
 @keyframes dx-sendPress {
-  0%, 63.45%  { transform: scale(1); background: #bdbdc2; }
-  63.5%       { transform: scale(1); background: var(--text); }
-  63.95%      { transform: scale(1); background: var(--text); }
-  64%         { transform: scale(0.9); background: var(--text); }
-  64.5%, 100% { transform: scale(1); background: #bdbdc2; }
+  0%, 63.85%  { transform: scale(1); background: #bdbdc2; }
+  63.9%       { transform: scale(1); background: var(--text); }
+  64.35%      { transform: scale(1); background: var(--text); }
+  64.4%       { transform: scale(0.9); background: var(--text); }
+  64.9%, 100% { transform: scale(1); background: #bdbdc2; }
 }
 
 /* ─── pitch labels (Your page / Recruiter's screen) ──────────────── */
@@ -1910,20 +1928,20 @@ button {
   pointer-events: none;
 }
 .dx-pitch-label-self {
-  animation: dx-pitchLabelSelf 20s linear infinite;
+  animation: dx-pitchLabelSelf 23s linear infinite;
 }
 .dx-pitch-label-recipient {
-  animation: dx-pitchLabelRecipient 20s linear infinite;
+  animation: dx-pitchLabelRecipient 23s linear infinite;
 }
 @keyframes dx-pitchLabelSelf {
-  0%, 22%      { opacity: 0; }
-  22.5%, 30%   { opacity: 1; }
-  32.5%, 100%  { opacity: 0; }
+  0%, 19%      { opacity: 0; }
+  19.5%, 28.3% { opacity: 1; }
+  30.4%, 100%  { opacity: 0; }
 }
 @keyframes dx-pitchLabelRecipient {
-  0%, 52%      { opacity: 0; }
-  52.5%, 57.5% { opacity: 1; }
-  60%, 100%    { opacity: 0; }
+  0%, 53.8%    { opacity: 0; }
+  54.3%, 58.7% { opacity: 1; }
+  60.9%, 100%  { opacity: 0; }
 }
 
 /* ─── text message scene (iMessage-style, two perspectives) ──────── */
@@ -1990,7 +2008,7 @@ button {
   color: #fff;
   border-bottom-right-radius: 6px;
   transform: translateY(20px) scale(0.95);
-  animation: dx-bubbleSelf 20s linear infinite;
+  animation: dx-bubbleSelf 23s linear infinite;
 }
 .dx-text-bubble-in {
   align-self: flex-start;
@@ -1998,7 +2016,7 @@ button {
   color: var(--text);
   border-bottom-left-radius: 6px;
   transform: translateY(20px) scale(0.95);
-  animation: dx-bubbleRecip 20s linear infinite;
+  animation: dx-bubbleRecip 23s linear infinite;
 }
 .dx-text-status {
   align-self: flex-end;
@@ -2007,7 +2025,7 @@ button {
   margin-top: 2px;
   margin-right: 4px;
   opacity: 0;
-  animation: dx-deliveredSelf 20s linear infinite;
+  animation: dx-deliveredSelf 23s linear infinite;
 }
 .dx-text-input {
   height: clamp(34px, 5.5vw, 38px);
@@ -2022,18 +2040,53 @@ button {
 }
 
 @keyframes dx-bubbleSelf {
-  0%, 33%      { opacity: 0; transform: translateY(20px) scale(0.95); }
-  35%, 42.5%   { opacity: 1; transform: translateY(0) scale(1); }
+  0%, 31%      { opacity: 0; transform: translateY(20px) scale(0.95); }
+  33%, 41.3%   { opacity: 1; transform: translateY(0) scale(1); }
   100%         { opacity: 0; transform: translateY(20px) scale(0.95); }
 }
 @keyframes dx-bubbleRecip {
-  0%, 43%      { opacity: 0; transform: translateY(20px) scale(0.95); }
-  45%, 52.5%   { opacity: 1; transform: translateY(0) scale(1); }
+  0%, 42%      { opacity: 0; transform: translateY(20px) scale(0.95); }
+  44%, 54.3%   { opacity: 1; transform: translateY(0) scale(1); }
   100%         { opacity: 0; transform: translateY(20px) scale(0.95); }
 }
 @keyframes dx-deliveredSelf {
-  0%, 37%      { opacity: 0; }
-  38%, 42.5%   { opacity: 1; }
+  0%, 35%      { opacity: 0; }
+  36%, 41.3%   { opacity: 1; }
   100%         { opacity: 0; }
+}
+
+/* Click ripple on the link inside the Recruiter's incoming bubble —
+   triggers around 12s (52.2%), late in the recruiter scene, so the
+   transition to Pitch #2 reads as "the recruiter clicked the link". */
+.dx-text-link {
+  position: relative;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  display: inline-block;
+}
+.dx-text-bubble-out .dx-text-link {
+  color: inherit;
+}
+.dx-text-bubble-in .dx-text-link {
+  color: #007aff;
+}
+.dx-text-link-ripple {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  transform: translate(-50%, -50%) scale(0.9);
+  border: 2px solid #007aff;
+  opacity: 0;
+  pointer-events: none;
+  animation: dx-linkClickRipple 23s linear infinite;
+}
+@keyframes dx-linkClickRipple {
+  0%, 51.5% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  52%       { opacity: 0.6; transform: translate(-50%, -50%) scale(0.9); }
+  53.5%     { opacity: 0; transform: translate(-50%, -50%) scale(1.3); }
+  100%      { opacity: 0; transform: translate(-50%, -50%) scale(1.3); }
 }
 
