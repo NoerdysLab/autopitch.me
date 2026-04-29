@@ -1348,7 +1348,7 @@ button {
 
 /* ─── home demo storyboard ───────────────────────────────────────────
    Each scene is absolutely positioned to overlay the wrap, with its
-   own opacity keyframe fading it in/out across the shared 20s loop.
+   own opacity keyframe fading it in/out across the shared 23s loop.
    No fixed pixel canvas, no scale transform — every size uses clamp()
    or relative units so the demo reads at any width from ~320px up. */
 
@@ -1561,7 +1561,7 @@ button {
   height: 0;
   overflow: hidden;
   white-space: pre-wrap;
-  animation: dx-resumePaste 20s steps(1, end) infinite;
+  animation: dx-resumePaste 23s steps(1, end) infinite;
 }
 /* Same reset-after-fade-out trick: paste at 15%, height stays full while
    scene is up, then snaps back to 0 at 19.5% so the next loop's fade-in
@@ -1873,7 +1873,7 @@ button {
 .dx-aiw-input .dx-reveal-prompt {
   display: inline;
   opacity: 0;
-  animation: dx-promptInstant 20s steps(1, end) infinite;
+  animation: dx-promptInstant 23s steps(1, end) infinite;
 }
 @keyframes dx-promptInstant {
   0%, 62.55%  { opacity: 0; }
