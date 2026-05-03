@@ -7,7 +7,16 @@ import { PROFILE_PROMPT } from "@/lib/profile-prompt";
 // copies PROFILE_PROMPT to the clipboard and floats a small "copied"
 // bubble above the link for ~1.4s. The link text itself doesn't change —
 // the bubble does the acknowledgment.
-export default function CopyPromptButton() {
+//
+// Caller can override children + className for places that want a more
+// prominent button instead of the default inline-link styling.
+export default function CopyPromptButton({
+  children = "copy this prompt",
+  className = "hint-link",
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) {
   // ID lets each click restart the animation cleanly. A timestamp value
   // is unique per click → React unmounts + remounts the bubble (key={id}),
   // which replays the keyframe from 0%.
@@ -31,8 +40,8 @@ export default function CopyPromptButton() {
 
   return (
     <span className="hint-link-wrap">
-      <button type="button" className="hint-link" onClick={copy}>
-        copy this prompt
+      <button type="button" className={className} onClick={copy}>
+        {children}
       </button>
       {bubbleId > 0 && (
         <span key={bubbleId} className="copy-bubble" aria-live="polite">
