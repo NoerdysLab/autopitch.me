@@ -206,7 +206,7 @@ export default function SetupClient({ email }: { email: string }) {
           <span>LinkedIn URL <em>optional, but recommended</em></span>
           <input
             className="input"
-            type="url"
+            type="text"
             maxLength={200}
             placeholder="linkedin.com/in/yourname"
             value={linkedin}
@@ -223,7 +223,7 @@ export default function SetupClient({ email }: { email: string }) {
           <span>Instagram URL <em>optional</em></span>
           <input
             className="input"
-            type="url"
+            type="text"
             maxLength={200}
             placeholder="instagram.com/yourname"
             value={instagram}
@@ -235,7 +235,7 @@ export default function SetupClient({ email }: { email: string }) {
           <span>X URL <em>optional</em></span>
           <input
             className="input"
-            type="url"
+            type="text"
             maxLength={200}
             placeholder="x.com/yourname"
             value={x}

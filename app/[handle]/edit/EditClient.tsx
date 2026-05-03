@@ -264,7 +264,7 @@ export default function EditClient(props: Props) {
           <span>LinkedIn URL <em>optional, but recommended</em></span>
           <input
             className="input"
-            type="url"
+            type="text"
             maxLength={200}
             placeholder="linkedin.com/in/yourname"
             value={linkedin}
@@ -281,7 +281,7 @@ export default function EditClient(props: Props) {
           <span>Instagram URL <em>optional</em></span>
           <input
             className="input"
-            type="url"
+            type="text"
             maxLength={200}
             placeholder="instagram.com/yourname"
             value={instagram}
@@ -293,7 +293,7 @@ export default function EditClient(props: Props) {
           <span>X URL <em>optional</em></span>
           <input
             className="input"
-            type="url"
+            type="text"
             maxLength={200}
             placeholder="x.com/yourname"
             value={x}
