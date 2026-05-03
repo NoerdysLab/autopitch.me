@@ -9,8 +9,8 @@ import { DEFAULT_THEME, type ThemeKey } from "@/lib/themes";
 const ERRORS: Record<string, string> = {
   name_required: "Add your name (1–80 characters).",
   tagline_too_long: "Tagline is too long (120 characters max).",
-  resume_too_short: "Paste a real résumé — at least 40 characters.",
-  resume_too_large: "Résumé is too large (64KB max).",
+  resume_too_short: "Your profile is too short — at least 40 characters.",
+  resume_too_large: "Your profile is too large (64KB max).",
   linkedin_invalid:
     "That doesn't look like a LinkedIn profile URL. Should look like linkedin.com/in/yourname.",
   instagram_invalid:
@@ -122,8 +122,24 @@ export default function SetupClient({ email }: { email: string }) {
 
         <div className="notice notice-tight">
           <strong>Heads up:</strong> Claude is the only AI that reliably
-          opens your résumé link directly today. ChatGPT, Perplexity, and
+          opens your profile link directly today. ChatGPT, Perplexity, and
           Gemini also work — they pitch from the LinkedIn URL below.
+        </div>
+
+        <div className="profile-callout">
+          <h3>Best results: let your AI interview you</h3>
+          <p>
+            Pitches built from a plain résumé end up generic. Spend ~5
+            minutes letting Claude (or ChatGPT, Gemini, Perplexity) draw
+            out the <em>why</em> behind your background:
+          </p>
+          <ol className="profile-steps">
+            <li>
+              <CopyPromptButton />
+            </li>
+            <li>Paste it into your AI and answer the questions it asks</li>
+            <li>Paste the markdown profile it generates into the field below</li>
+          </ol>
         </div>
 
         <div className="photo-row">
@@ -236,7 +252,7 @@ export default function SetupClient({ email }: { email: string }) {
         </div>
 
         <label className="field">
-          <span>Your background (markdown)</span>
+          <span>Your profile (markdown)</span>
           <textarea
             className="input textarea"
             required
@@ -246,10 +262,8 @@ export default function SetupClient({ email }: { email: string }) {
             onChange={(e) => setResume(e.target.value)}
           />
           <span className="field-hint">
-            This doesn't have to be just a résumé — anything that helps an AI
-            pitch you (accomplishments, side projects, hobbies, what energizes
-            you) fits here. Not sure where to start? <CopyPromptButton /> and
-            paste it into Claude, ChatGPT, or Gemini.
+            Already have a résumé? Pasting that here works too — pitches
+            just won't be as rich.
           </span>
         </label>
 

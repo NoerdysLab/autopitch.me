@@ -43,8 +43,8 @@ export default async function Home() {
           <div className="steps steps-tight">
             <div className="step">
               <div className="step-num">1</div>
-              <h3>Paste your résumé</h3>
-              <p>Markdown or plain text. Takes 30 seconds.</p>
+              <h3>Build your profile</h3>
+              <p>Talk to your AI for 5 minutes — or paste a résumé.</p>
             </div>
             <div className="step">
               <div className="step-num">2</div>
