@@ -193,7 +193,7 @@ export default function HomeDemo() {
 
       <section className="dx-scene dx-scene-pitch">
         <div className="dx-url-bar">
-          warmpitch.me/<span className="dx-strong">k7n2</span>
+          warmpitch.me/<span className="dx-strong">x4k9</span>
         </div>
         <div className="dx-pitch-label dx-pitch-label-self">Your page</div>
         <div className="dx-pitch-label dx-pitch-label-recipient">
@@ -225,7 +225,7 @@ export default function HomeDemo() {
           <div className="dx-text-body">
             <div className="dx-text-bubble dx-text-bubble-out">
               Here, use this —{" "}
-              <span className="dx-text-link">warmpitch.me/k7n2</span>
+              <span className="dx-text-link">warmpitch.me/x4k9</span>
             </div>
             <div className="dx-text-status">Delivered</div>
           </div>
@@ -243,7 +243,7 @@ export default function HomeDemo() {
             <div className="dx-text-bubble dx-text-bubble-in">
               Here, use this —{" "}
               <span className="dx-text-link">
-                warmpitch.me/k7n2
+                warmpitch.me/x4k9
                 <span className="dx-text-link-ripple"></span>
               </span>
             </div>

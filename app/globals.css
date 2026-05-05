@@ -1110,14 +1110,17 @@ button {
   font-size: 14px;
 }
 
-.cta-secondary {
+/* Scoped to .me-actions so we don't clobber the global .cta-secondary
+   used by the setup wizard. The variant here is flatter (no shadow,
+   bg-cream instead of surface-white) because it sits inside a card. */
+.me-actions .cta-secondary {
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--border);
   box-shadow: none;
 }
 
-.cta-secondary:hover {
+.me-actions .cta-secondary:hover {
   background: var(--surface);
   box-shadow: 0 6px 18px var(--shadow-hover);
 }

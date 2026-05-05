@@ -20,10 +20,13 @@ export async function POST(req: Request) {
   } catch (err) {
     // Top-level safety net so an uncaught error becomes a structured 500
     // the client can display, instead of the empty-body Vercel error page.
+    // Log the real cause for us (Vercel logs); send a generic message to
+    // the client so we don't leak DB error text, column names, or
+    // connection-string fragments.
     const detail = err instanceof Error ? err.message : String(err);
     console.error("[/api/users/create] uncaught:", detail);
     return NextResponse.json(
-      { error: "internal", message: detail },
+      { error: "internal", message: "Something went wrong. Please try again." },
       { status: 500 },
     );
   }

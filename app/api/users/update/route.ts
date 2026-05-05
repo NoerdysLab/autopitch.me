@@ -15,10 +15,12 @@ export async function POST(req: Request) {
   try {
     return await handle(req);
   } catch (err) {
+    // Log the real cause for us; send a generic message to the client so
+    // we don't leak DB error text or other internals.
     const detail = err instanceof Error ? err.message : String(err);
     console.error("[/api/users/update] uncaught:", detail);
     return NextResponse.json(
-      { error: "internal", message: detail },
+      { error: "internal", message: "Something went wrong. Please try again." },
       { status: 500 },
     );
   }

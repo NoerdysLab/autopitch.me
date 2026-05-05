@@ -197,7 +197,6 @@ export default function SetupClient({ email }: { email: string }) {
               className="input textarea"
               required
               rows={14}
-              minLength={MIN_RESUME}
               placeholder={
                 "# Your Name\n\nA short opener — who you are, what you're into, what you want next.\n\n## Experience\n- ...\n\n## Education\n- ..."
               }
